@@ -756,6 +756,7 @@ vector<ModelOutcome> getTopPerformers_TFT(vector<string> parameterPool, gameObje
     return topPerformers;
 }
 
+// This looks like it is creating or recording a gene that is used
 void initAgents(int popSize, string agenttype) {
     int numGenes = 33;
     if (agenttype == "tft")
@@ -773,19 +774,25 @@ void initAgents(int popSize, string agenttype) {
 // ./epdm [agenttype] [method]
 int main(int argc, char *argv[]) {
     srand(time(NULL));
+    // Filter the parameters
     if (argc != 3) {
         cout << "wrong number of parameters" << endl;
         exit(1);
     }
 
+    // Set the agent type and method as prescribed in the cl args
     string agenttype(argv[1]);
     string method(argv[2]);
 
+    // Initial popularity score and starting gene
     int popSize = 100;
     int startGen = 0;
 
+    // This will affect how the genes are laid out... need to cover this
+    // Community aware behavior from paper 1
     if (agenttype == "cab")
         initAgents(popSize, "gene");
+    // Tit-for-tat or behavior matching as the paper says. This has 7 parameters
     else
         initAgents(popSize, "tft");
 
