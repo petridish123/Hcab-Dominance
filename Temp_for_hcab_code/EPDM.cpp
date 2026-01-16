@@ -894,7 +894,7 @@ int main(int argc, char *argv[]) {
 
     const int maxPlayers = 12;
     vector<string> resampledPopulation;
-    for (int gen = startGen; gen < 60; gen++) {
+    for (int gen = startGen; gen < 60; gen++) { // This will only run for 60 generations
         cout << "Starting gen " << gen << endl;
         vector< vector<ModelOutcome> > allTopPerformers;
 

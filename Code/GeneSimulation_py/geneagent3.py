@@ -267,7 +267,7 @@ class GeneAgent3(AbstractAgent):
         # group analysis and choice
         communities, selected_community = self.group_analysis(round_num, num_players, player_idx, popularities, influence)
 
-        # figure out how many tokens to keep
+        # figure out how many tokens to keep // really estimating how many others are keeping
         self.estimate_keeping(player_idx, num_players, num_tokens, communities)
         self.printT(player_idx, "\n estimated keeping: " + str(np.round( [float(i) for i in self.keeping_strength], 1)))
 
