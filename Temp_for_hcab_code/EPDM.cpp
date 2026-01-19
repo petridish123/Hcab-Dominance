@@ -864,33 +864,7 @@ int main(int argc, char *argv[]) {
     g[49] = new gameObject("../JHG_DataSets/TheData/training_set_experienced/jhg_ZRHK.csv");
     g[50] = new gameObject("../JHG_DataSets/TheData/training_set_experienced/jhg_ZSLG.csv");
 
-    // int keepCount = 0;
-    // int giveCount = 0;
-    // int stealCount = 0;
-    // for (int game = 0; game < numTrainingGames; game++) {
-    //     for (int r = 1; r < g[game]->numRounds+1; r++) {
-    //         for (int i = 0; i < g[game]->numPlayers; i++) {
-    //             if (g[game]->playerType[i] == "Human") {
-    //                 for (int j = 0; j < g[game]->numPlayers; j++) {
-    //                     if (i == j)
-    //                         keepCount += g[game]->allocations[r][i][j];
-    //                     else if (g[game]->allocations[r][i][j] > 0)
-    //                         giveCount += g[game]->allocations[r][i][j];   
-    //                     else
-    //                         stealCount -= g[game]->allocations[r][i][j];
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
 
-    // int total = keepCount + giveCount + stealCount;
-    // cout << "num token allocations: " << total << endl;
-    // cout << "Percent keep: " << (keepCount / (double)total) << endl;
-    // cout << "Percent steal: " << (stealCount / (double)total) << endl;
-    // cout << "Percent give: " << (giveCount / (double)total) << endl;
-
-    // getTestSetStats();
 
     const int maxPlayers = 12;
     vector<string> resampledPopulation;
@@ -898,21 +872,10 @@ int main(int argc, char *argv[]) {
         cout << "Starting gen " << gen << endl;
         vector< vector<ModelOutcome> > allTopPerformers;
 
-        // for (int game = 0; game < numTrainingGames; game++) { 
-        //     for (int idx = 0; idx < g[game]->numPlayers; idx++) {
-        //         if (g[game]->playerType[idx] == "Human") {
-        //             cout << "Player game (" << game << ", " << idx << ") ";
-        //             vector<ModelOutcome> topPerformers = computeTopPerformers(parameterPool, g[game], idx, numTopPerformers, method);
-        //             allTopPerformers.push_back(topPerformers);
-        //         }
-        //     }
-        // }
-
-        // vector<future<void>> init_futures(numTrainingGames);
         vector<future<vector<ModelOutcome>>> futures(numTrainingGames*maxPlayers);
         vector<ModelOutcome> myFuture;
-        for (int game = 0; game < numTrainingGames; game++) { 
-            for (int idx = 0; idx < maxPlayers; idx++) {
+        for (int game = 0; game < numTrainingGames; game++) { // all the games
+            for (int idx = 0; idx < maxPlayers; idx++) { // all the players
                 if (agenttype == "cab")
                     futures[game*maxPlayers+idx] = async(launch::async, getTopPerformers, parameterPool, g[game], idx, numTopPerformers, method);
                 else
@@ -928,15 +891,10 @@ int main(int argc, char *argv[]) {
                 // vector<ModelOutcome> topPerformers = myFuture;
 
                 if (topPerformers.size() > 0) {
-                    // cout << "top performers for " << game << ", " << idx << ": ";
-                    // for (int i = 0; i < 10; i++) {
-                    //     cout << "(" << topPerformers[i].i << ", " << topPerformers[i].cost << ");";
-                    // }
-                    // cout << endl;
 
                     cnt ++;
                     allTopPerformers.push_back(topPerformers);
-                    // cout << "pushed back: " << allTopPerformers.size() << endl;
+
                 }
             }
         }
@@ -945,46 +903,6 @@ int main(int argc, char *argv[]) {
 
         cout << "finished computing top performers" << endl;
 
-    //     // // print out the top performers for now
-    //     // ofstream output("parameterPools/topPerformers.csv");
-
-    //     // for (int i = 0; i < allTopPerformers.size(); i++) {
-    //     //     int j = 0;
-    //     //     while (((allTopPerformers[i][j].cost < (allTopPerformers[i][0].cost + 0.05)) || (j < 5)) && (j < allTopPerformers[i].size())) {
-    //     //         if (j == 0)
-    //     //             output << allTopPerformers[i][j].i;
-    //     //         else
-    //     //             output << "," << allTopPerformers[i][j].i;
-    //     //         j++;
-    //     //     }
-    //     //     output << endl;
-    //     // }
-
-    //     // output.close();
-
-    //     // ifstream input("parameterPools/topPerformers.csv");
-
-    //     // if (!input) {
-    //     //     cout << "file not found" << endl;
-    //     //     exit(1);
-    //     // }
-
-    //     // // vector< vector<ModelOutcome> > allTopPerformers;
-    //     // string line;
-    //     // while (getline(input, line)) {
-    //     //     vector<string> words = split(line, ',');
-
-    //     //     vector<ModelOutcome> entry;
-    //     //     for (int i = 0; i < words.size(); i++) {
-    //     //         ModelOutcome mo;
-    //     //         mo.i = stoi(words[i]);
-    //     //         mo.cost = 1.0;
-    //     //         entry.push_back(mo);
-    //     //     }
-    //     //     allTopPerformers.push_back(entry);
-    //     // }
-
-    //     // input.close();
 
         vector<int> phi = findCoreSet(allTopPerformers, numTopPerformers, margin, popSize);
         cout << "greedy minimal set: ";
