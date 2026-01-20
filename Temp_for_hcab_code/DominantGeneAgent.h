@@ -36,6 +36,15 @@ Outline of this agent:
         detect player genes really well
 
     }
+
+Important parts of the epdm algorithm:
+
+Fitness of gene pi is # of player games it is a top performer (basically asks, how generalized is this gene)
+
+in the compute Gamma^pi(g) it is finding the distance of the gene from the player distribution,
+We will have to do that, but for all the current hcab genes.
+
+The scoring function is on line 405 in the EPDM.cpp file
 */
 
 
