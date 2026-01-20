@@ -44,7 +44,7 @@ Fitness of gene pi is # of player games it is a top performer (basically asks, h
 in the compute Gamma^pi(g) it is finding the distance of the gene from the player distribution,
 We will have to do that, but for all the current hcab genes.
 
-The scoring function is on line 405 in the EPDM.cpp file
+The scoring function is around line 405 in the EPDM.cpp file. I say around because I am making comments still.
 */
 
 

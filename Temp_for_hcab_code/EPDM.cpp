@@ -220,6 +220,12 @@ int tokensGiven(int *a, int numPlayers, int playerIdx) {
 }
 
 double scoreProposedAllocation(int *allocation, int *proposedAllocation, int numPlayers, int playerIdx, const string method) {
+    /*
+    For the method:
+    MSE : mean squarred error sum (y-y_i)^2
+    ME : mean error sum (y-y_i)
+    PS : idk what it stands for, but giving to the right number of players, giving the right amount (total) giving the right amount to each player... for stealing and keep too
+    */
     double errores = 0.0;
     if (method == "MSE") {
         double diff;
@@ -402,7 +408,9 @@ double scorePlayerGame_TFT(gameObject *g, int playerIdx, TFTAgent *agent, const 
     return score / g->numRounds;
 }
 
-double scorePlayerGame(gameObject *g, int playerIdx, GeneAgent *agent, const string method) {
+double scorePlayerGame(gameObject *g, int playerIdx, GeneAgent *agent, const string method) { 
+    // this function will score an agent's choices against the player choices
+
     if (g->playerType[playerIdx] != "Human") {
         cout << "shouldn't model player of type " << g->playerType[playerIdx] << endl;
         return -99999;
@@ -414,16 +422,21 @@ double scorePlayerGame(gameObject *g, int playerIdx, GeneAgent *agent, const str
     double coefs[3] = {0.95, 1.3, 1.6};
 
     // tell agents the game parameters and give each the chance to post a contract
+    // Need to find out what these parameters do
     agent->setGameParams(coefs, alpha, beta, 0.0, false);
     int *allocationArray = new int[g->numPlayers];
 
     double score = 0.0;
     for (int r = 1; r < g->numRounds+1; r++) {
+        // for each round, test the agents allocations by having it play a round, it modifies the allocation array passed in
         agent->playRound(g->numPlayers, g->numPlayers*2, playerIdx, r-1, g->received[r-1][playerIdx], g->popularities[r-1], g->influence[r-1], allocationArray);
         
         // update the CAB agent's allocations based on what really happened, not what it chose
+        // This is to test the CAB's interactions independently from the previous rounds 
         agent->updatePastInteractions(g->numPlayers, g->allocations[r][playerIdx]);
 
+        // Scores the allocations... not much too it
+        // This method will get the difference between the allocations
         double val = scoreProposedAllocation(g->allocations[r][playerIdx], allocationArray, g->numPlayers, playerIdx, method);
 
         // cout << "Round " << r << endl;
@@ -434,6 +447,7 @@ double scorePlayerGame(gameObject *g, int playerIdx, GeneAgent *agent, const str
         // cout << "PS score: " << ps << endl;
         // cout << endl;
 
+        // Update the score
         score += val;
     }
 
@@ -443,6 +457,7 @@ double scorePlayerGame(gameObject *g, int playerIdx, GeneAgent *agent, const str
 
     delete[] allocationArray;
 
+    // Get the average score
     return score / g->numRounds;
 }
 
