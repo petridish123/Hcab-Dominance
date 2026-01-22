@@ -72,6 +72,21 @@ public:
         */
 
         }
+    
+    double score_player(){
+        /*
+        This function needs to take in the player's actions, compare their previous actions to what the agents would do
+
+        it will compare the player's action with what the agent would do and then score the allocation for each round.
+
+        Then once it compares, it will return a score based on the epdm's scoring
+        */
+        double score = 0.0;
+
+
+
+        return score;
+    }
 
 };
 
