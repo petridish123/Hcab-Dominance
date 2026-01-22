@@ -73,7 +73,7 @@ public:
 
         }
     
-    double score_player(){
+    double score_player(){ // Talk to jake about what this needs as parameters. player (index), method?, game actions
         /*
         This function needs to take in the player's actions, compare their previous actions to what the agents would do
 
@@ -89,5 +89,159 @@ public:
     }
 
 };
+
+/*
+struct gameObject {
+    gameObject(string filename) {
+        // read in the game object
+        ifstream input(filename);
+        string line;
+
+        if (!input) {
+            cout << "file " << filename << " not found" << endl;
+            exit(1);
+        }
+
+        // read in the header
+        getline(input, line);
+        numPlayers = getNumPlayers(line);
+
+        // read in the first line (initializing everything)
+        vector<string> theRounds;
+        getline(input, line);
+        theRounds.push_back(line);
+
+        // read in all the lines, save them, and count the number of rounds
+        int cnt = 0;
+        while (getline(input, line)) {
+            theRounds.push_back(line);
+            cnt ++;
+        }
+        input.close();
+        numRounds = cnt;
+
+        // cout << numRounds << endl;
+
+        // now allocate memory and save out values
+        playerType = new string[numPlayers];
+        popularities = new double*[numRounds+1];
+        allocations = new int**[numRounds+1];
+        received = new double**[numRounds+1];
+        influence = new double**[numRounds+1];
+        for (int r = 0; r < numRounds+1; r++) {
+            vector<string> words = split(theRounds[r], ',');
+            if (r == 0) {
+                for (int i = 0; i < numPlayers; i++) {
+                    playerType[i] = words[6+numPlayers+2*numPlayers*numPlayers+i];
+                    // cout << playerType[i] << endl;
+                }
+
+            }
+
+            // cout << "Round: " << r << endl << endl;
+            // get all the popularities this round
+            popularities[r] = new double[numPlayers];
+            for (int i = 0; i < numPlayers; i++) {
+                popularities[r][i] = stof(words[6+i]);
+            }
+
+            int cnt2 = 0;
+            allocations[r] = new int*[numPlayers];
+            received[r] = new double*[numPlayers];
+            influence[r] = new double*[numPlayers];
+            for (int i = 0; i < numPlayers; i++) {
+                allocations[r][i] = new int[numPlayers];
+                received[r][i] = new double[numPlayers];
+                influence[r][i] = new double[numPlayers];
+                for (int j = 0; j < numPlayers; j++) {
+                    allocations[r][i][j] = (int)(stof(words[6+numPlayers+cnt2]));
+                    influence[r][i][j] = stof(words[6+numPlayers+numPlayers*numPlayers+cnt2]);
+                    cnt2++;
+                }
+            }
+            
+            // transpose the influences so they can be used by cab agents
+            double tmp;
+            for (int i = 0; i < numPlayers; i++) {
+                for (int j = i; j < numPlayers; j++) {
+                    tmp = influence[r][i][j];
+                    influence[r][i][j] = influence[r][j][i];
+                    influence[r][j][i] = tmp;
+
+                    received[r][i][j] = allocations[r][j][i] / ((double)numPlayers*2.0);
+                    received[r][j][i] = allocations[r][i][j] / ((double)numPlayers*2.0);
+                }
+            }
+
+           
+        }
+    }
+
+    ~gameObject() {
+        for (int r = 0; r < numRounds+1; r++) {
+            for (int i = 0; i < numPlayers; i++) {
+                delete[] allocations[r][i];
+                delete[] received[r][i];
+                delete[] influence[r][i];
+            }
+            delete[] popularities[r];
+            delete[] allocations[r];
+            delete[] received[r];
+            delete[] influence[r];
+        }
+
+        delete[] popularities;
+        delete[] allocations;
+        delete[] received;
+        delete[] influence;
+        delete[] playerType;
+    }
+
+    int getNumPlayers(string header) {
+        vector<string> words = split(header, ',');
+        int i = 0;
+        while (words[i+6].at(0) == 'p')
+            i++;
+        return i;
+    }
+
+    vector<string> split(string& s, char delim=',') {
+        vector<string> tokens;
+        string token;
+        istringstream tokenStream(s);
+        while (getline(tokenStream, token, delim))
+            tokens.push_back(token);
+        return tokens;
+    }
+
+
+    int numRounds, numPlayers;
+    double **popularities, ***influence;
+    int ***allocations;
+    double ***received;
+    string *playerType;
+};
+*/
+
+
+
+/*
+TODO:
+
+1) Create the score player function
+- needs to take in a player's actions
+- take in the current state of the game
+- For each round, score an agent against the player, and see how close the agent works to the player.
+- Get a probability for each agent.
+
+2) Make the agent score players in a game,
+- maybe make the agent learn parameters to score players better, but I doubt that would be necessary.
+- allocate however for now, but later choose how to allocate, 
+- or change its genes and create a gene agent, pass in the information and see what allocations it would do
+
+
+*/
+
+
 
 #endif
