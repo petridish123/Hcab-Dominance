@@ -74,16 +74,34 @@ public:
         }
     
     double score_player(){ // Talk to jake about what this needs as parameters. player (index), method?, game actions
-        /*
-        This function needs to take in the player's actions, compare their previous actions to what the agents would do
-
-        it will compare the player's action with what the agent would do and then score the allocation for each round.
-
-        Then once it compares, it will return a score based on the epdm's scoring
-        */
         double score = 0.0;
+        
+        /*
+        TODO : 
+            Find where the player actions are stored
+            recieve those actions as input
+            Estimate based on those actions:
+                Create an agent and set the gene for each gene
+                Pass in the first round allocations? -> play the entire game up to present?
+                    or
+                Pass in the current round allocations, but store in a seperate 2d array the probabilities for each player to each gene.
+                    or
+                Create a new function and that one will only score a single round.
+        */
 
 
+        return score;
+    }
+
+    double score_player_single_round(){// needs to take in a game object, then the player allocations and the geneagent
+        double score = 0.0;
+        /*
+        Sister function to score_player. This function will take in a single allocation and single agent and score the player according to the agent.
+        Specifically this will score the player's last round allocations with the agent's allocations given the context of the game
+        
+        TODO:
+            find out what the game object is from Jake and also where to recieve the player allocations, maybe round number, and how to create gene agent.
+        */
 
         return score;
     }
