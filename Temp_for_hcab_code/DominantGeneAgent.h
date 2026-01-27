@@ -87,6 +87,9 @@ public:
                 Pass in the current round allocations, but store in a seperate 2d array the probabilities for each player to each gene.
                     or
                 Create a new function and that one will only score a single round.
+
+        This might only be able to take in the previous round's allocations, then make the gene agent
+        I will talk with Jake to see if we can "make" a game object while playing the game, so that we can pass the game around.
         */
 
 
