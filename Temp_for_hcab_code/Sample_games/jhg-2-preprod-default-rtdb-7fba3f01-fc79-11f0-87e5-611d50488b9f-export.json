@@ -1,0 +1,901 @@
+{
+  "chatInfo": {
+    "conversations": {
+      "global": {
+        "conversationId": "global",
+        "messages": {
+          "-Ok4vRJvNN0aGdKV0T0F": {
+            "body": "Round 2",
+            "runtimeType": "gameNotification",
+            "time": "2026-01-28T18:46:34.560847Z"
+          },
+          "-Ok4vSg3uEPgoJlcIRxt": {
+            "body": "Round 3",
+            "runtimeType": "gameNotification",
+            "time": "2026-01-28T18:46:40.138233Z"
+          },
+          "-Ok4vUUOWpC8UFizWyZB": {
+            "body": "Round 4",
+            "runtimeType": "gameNotification",
+            "time": "2026-01-28T18:46:47.518347Z"
+          },
+          "-Ok4vVlr-MnyZAm_79Ie": {
+            "body": "Round 5",
+            "runtimeType": "gameNotification",
+            "time": "2026-01-28T18:46:52.796545Z"
+          },
+          "-Ok4vYDoBWMgJh1i2izo": {
+            "body": "Round 6",
+            "runtimeType": "gameNotification",
+            "time": "2026-01-28T18:47:02.841739Z"
+          }
+        },
+        "name": "Global Chat"
+      }
+    }
+  },
+  "groupInfo": {
+    "Everyone": {
+      "groupPlayersInfo": {
+        "Delta": {
+          "influences": {
+            "Delta": 0,
+            "Foxtrot": 0,
+            "November": 55.29019394695073,
+            "Yankee": 9.389009779355066,
+            "__intrinsic__": 32.76800000000001
+          },
+          "popularity": 97.44720372630582
+        },
+        "Foxtrot": {
+          "influences": {
+            "Delta": 0,
+            "Foxtrot": 19.039231569667844,
+            "November": 0,
+            "Yankee": 17.45666994114275,
+            "__intrinsic__": 32.76800000000001
+          },
+          "popularity": 69.2639015108106
+        },
+        "November": {
+          "influences": {
+            "Delta": 45.07249205874421,
+            "Foxtrot": 14.129224549453012,
+            "November": 49.00412218975415,
+            "Yankee": 20.674501982970124,
+            "__intrinsic__": 32.76800000000001
+          },
+          "popularity": 161.6483407809215
+        },
+        "Yankee": {
+          "influences": {
+            "Delta": 15.964282755712539,
+            "Foxtrot": 17.182896214935536,
+            "November": 41.6864012957734,
+            "Yankee": 32.019758701171114,
+            "__intrinsic__": 32.76800000000001
+          },
+          "popularity": 139.6213389675926
+        }
+      }
+    }
+  },
+  "playerInfo": {
+    "7fba3f00-fc79-11f0-87e5-611d50488b9f": {
+      "botType": "",
+      "chatGroups": [
+        "global"
+      ],
+      "gameName": "Yankee",
+      "groupIds": [
+        "Everyone"
+      ],
+      "lastRoundTransactions": {
+        "tokensGiven": {
+          "Delta": -2,
+          "Foxtrot": 2,
+          "November": -1,
+          "Yankee": 3
+        },
+        "tokensReceived": {
+          "Delta": 8,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 3
+        }
+      },
+      "numTokens": 8,
+      "permissionsLevel": "regular"
+    },
+    "9e323be0-fc79-11f0-87e5-611d50488b9f": {
+      "botType": "Queen",
+      "chatGroups": [
+        "global"
+      ],
+      "gameName": "November",
+      "groupIds": [
+        "Everyone"
+      ],
+      "lastRoundTransactions": {
+        "tokensGiven": {
+          "Delta": 8,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 0
+        },
+        "tokensReceived": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": -1
+        }
+      },
+      "numTokens": 8,
+      "permissionsLevel": "regular"
+    },
+    "9e323be1-fc79-11f0-87e5-611d50488b9f": {
+      "botType": "Queen",
+      "chatGroups": [
+        "global"
+      ],
+      "gameName": "Delta",
+      "groupIds": [
+        "Everyone"
+      ],
+      "lastRoundTransactions": {
+        "tokensGiven": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 8
+        },
+        "tokensReceived": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 8,
+          "Yankee": -2
+        }
+      },
+      "numTokens": 8,
+      "permissionsLevel": "regular"
+    },
+    "9e323be2-fc79-11f0-87e5-611d50488b9f": {
+      "botType": "Queen",
+      "chatGroups": [
+        "global"
+      ],
+      "gameName": "Foxtrot",
+      "groupIds": [
+        "Everyone"
+      ],
+      "lastRoundTransactions": {
+        "tokensGiven": {
+          "Delta": 0,
+          "Foxtrot": 8,
+          "November": 0,
+          "Yankee": 0
+        },
+        "tokensReceived": {
+          "Delta": 0,
+          "Foxtrot": 8,
+          "November": 0,
+          "Yankee": 2
+        }
+      },
+      "numTokens": 8,
+      "permissionsLevel": "regular"
+    }
+  },
+  "privateInfo": {
+    "consecutiveDeadRounds": 0,
+    "conversationIds": [
+      "global"
+    ],
+    "creatorId": "7fba3f00-fc79-11f0-87e5-611d50488b9f",
+    "gameEndCondition": {
+      "round": 5,
+      "runtimeType": "round"
+    },
+    "gameNames": [
+      "Yankee",
+      "November",
+      "Delta",
+      "Foxtrot"
+    ],
+    "masterGroups": {
+      "round_1": {
+        "Everyone": {
+          "gameNames": [
+            "Yankee",
+            "November",
+            "Delta",
+            "Foxtrot"
+          ]
+        }
+      },
+      "round_2": {
+        "Everyone": {
+          "gameNames": [
+            "Yankee",
+            "November",
+            "Delta",
+            "Foxtrot"
+          ]
+        }
+      },
+      "round_3": {
+        "Everyone": {
+          "gameNames": [
+            "Yankee",
+            "November",
+            "Delta",
+            "Foxtrot"
+          ]
+        }
+      },
+      "round_4": {
+        "Everyone": {
+          "gameNames": [
+            "Yankee",
+            "November",
+            "Delta",
+            "Foxtrot"
+          ]
+        }
+      },
+      "round_5": {
+        "Everyone": {
+          "gameNames": [
+            "Yankee",
+            "November",
+            "Delta",
+            "Foxtrot"
+          ]
+        }
+      },
+      "round_6": {
+        "Everyone": {
+          "gameNames": [
+            "Yankee",
+            "November",
+            "Delta",
+            "Foxtrot"
+          ]
+        }
+      }
+    },
+    "masterInfluences": {
+      "round_1": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 0,
+          "__intrinsic__": 100
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 0,
+          "__intrinsic__": 100
+        },
+        "November": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 0,
+          "__intrinsic__": 100
+        },
+        "Yankee": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 0,
+          "__intrinsic__": 100
+        }
+      },
+      "round_2": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 9.750000000000002,
+          "__intrinsic__": 80
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 0,
+          "__intrinsic__": 80
+        },
+        "November": {
+          "Delta": 26,
+          "Foxtrot": 0,
+          "November": 19,
+          "Yankee": 13,
+          "__intrinsic__": 80
+        },
+        "Yankee": {
+          "Delta": 0,
+          "Foxtrot": 26,
+          "November": 0,
+          "Yankee": 2.375,
+          "__intrinsic__": 80
+        }
+      },
+      "round_3": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 32.61815419420247,
+          "__intrinsic__": 64.00000000000001
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 0,
+          "__intrinsic__": 64.00000000000001
+        },
+        "November": {
+          "Delta": 42.707303995193755,
+          "Foxtrot": 0,
+          "November": 43.90158606188045,
+          "Yankee": 10.617122258936622,
+          "__intrinsic__": 64.00000000000001
+        },
+        "Yankee": {
+          "Delta": 0,
+          "Foxtrot": 39.19759687593873,
+          "November": 0,
+          "Yankee": 4.513572816536498,
+          "__intrinsic__": 64.00000000000001
+        }
+      },
+      "round_4": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 29.107362120796605,
+          "__intrinsic__": 51.20000000000001
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 12.160000000000004,
+          "November": 0,
+          "Yankee": 14.002452060021781,
+          "__intrinsic__": 51.20000000000001
+        },
+        "November": {
+          "Delta": 59.99437820493715,
+          "Foxtrot": 0,
+          "November": 68.19909813473413,
+          "Yankee": 18.834325597103014,
+          "__intrinsic__": 51.20000000000001
+        },
+        "Yankee": {
+          "Delta": 0,
+          "Foxtrot": 28.046325534943584,
+          "November": 0,
+          "Yankee": 3.5431070192290046,
+          "__intrinsic__": 51.20000000000001
+        }
+      },
+      "round_5": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 20.441087521971287,
+          "__intrinsic__": 40.96000000000001
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 10.621157681219428,
+          "November": 0,
+          "Yankee": 9.816417357662111,
+          "__intrinsic__": 40.96000000000001
+        },
+        "November": {
+          "Delta": 64.44131584139498,
+          "Foxtrot": 20.114237535605668,
+          "November": 60.48318975406073,
+          "Yankee": 26.655848972595248,
+          "__intrinsic__": 40.96000000000001
+        },
+        "Yankee": {
+          "Delta": 0,
+          "Foxtrot": 24.11266030723516,
+          "November": 51.539228503561326,
+          "Yankee": 8.38620580899126,
+          "__intrinsic__": 40.96000000000001
+        }
+      },
+      "round_6": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 55.29019394695073,
+          "Yankee": 9.389009779355066,
+          "__intrinsic__": 32.76800000000001
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 19.039231569667844,
+          "November": 0,
+          "Yankee": 17.45666994114275,
+          "__intrinsic__": 32.76800000000001
+        },
+        "November": {
+          "Delta": 45.07249205874421,
+          "Foxtrot": 14.129224549453012,
+          "November": 49.00412218975415,
+          "Yankee": 20.674501982970124,
+          "__intrinsic__": 32.76800000000001
+        },
+        "Yankee": {
+          "Delta": 15.964282755712539,
+          "Foxtrot": 17.182896214935536,
+          "November": 41.6864012957734,
+          "Yankee": 32.019758701171114,
+          "__intrinsic__": 32.76800000000001
+        }
+      }
+    },
+    "masterPlayerInfo": {
+      "round_1": {
+        "Delta": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "Foxtrot": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "November": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "Yankee": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        }
+      },
+      "round_2": {
+        "Delta": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "Foxtrot": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "November": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "Yankee": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        }
+      },
+      "round_3": {
+        "Delta": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "Foxtrot": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "November": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "Yankee": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        }
+      },
+      "round_4": {
+        "Delta": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "Foxtrot": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "November": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "Yankee": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        }
+      },
+      "round_5": {
+        "Delta": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "Foxtrot": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "November": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "Yankee": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        }
+      },
+      "round_6": {
+        "Delta": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "Foxtrot": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "November": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        },
+        "Yankee": {
+          "groupIds": [
+            "Everyone"
+          ],
+          "numTokens": 8
+        }
+      }
+    },
+    "masterPopularities": {
+      "round_1": {
+        "Delta": 100,
+        "Foxtrot": 100,
+        "November": 100,
+        "Yankee": 100
+      },
+      "round_2": {
+        "Delta": 89.75,
+        "Foxtrot": 80,
+        "November": 138,
+        "Yankee": 108.375
+      },
+      "round_3": {
+        "Delta": 96.61815419420248,
+        "Foxtrot": 64.00000000000001,
+        "November": 161.22601231601084,
+        "Yankee": 107.71116969247524
+      },
+      "round_4": {
+        "Delta": 80.30736212079661,
+        "Foxtrot": 77.3624520600218,
+        "November": 198.2278019367743,
+        "Yankee": 82.7894325541726
+      },
+      "round_5": {
+        "Delta": 61.40108752197129,
+        "Foxtrot": 61.39757503888155,
+        "November": 212.65459210365663,
+        "Yankee": 124.99809461978776
+      },
+      "round_6": {
+        "Delta": 97.44720372630582,
+        "Foxtrot": 69.2639015108106,
+        "November": 161.6483407809215,
+        "Yankee": 139.6213389675926
+      }
+    },
+    "masterTransactions": {
+      "round_1": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 8,
+          "Yankee": 0
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 8
+        },
+        "November": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 8,
+          "Yankee": 0
+        },
+        "Yankee": {
+          "Delta": 3,
+          "Foxtrot": 0,
+          "November": 4,
+          "Yankee": 1
+        }
+      },
+      "round_2": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 8,
+          "Yankee": 0
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 8
+        },
+        "November": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 8,
+          "Yankee": 0
+        },
+        "Yankee": {
+          "Delta": 7,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 1
+        }
+      },
+      "round_3": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 8,
+          "Yankee": 0
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 8,
+          "November": 0,
+          "Yankee": 0
+        },
+        "November": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 8,
+          "Yankee": 0
+        },
+        "Yankee": {
+          "Delta": 1,
+          "Foxtrot": 4,
+          "November": 3,
+          "Yankee": 0
+        }
+      },
+      "round_4": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 8,
+          "Yankee": 0
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 8,
+          "Yankee": 0
+        },
+        "November": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 8
+        },
+        "Yankee": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 5,
+          "Yankee": 3
+        }
+      },
+      "round_5": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 8
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 8,
+          "November": 0,
+          "Yankee": 0
+        },
+        "November": {
+          "Delta": 8,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 0
+        },
+        "Yankee": {
+          "Delta": -2,
+          "Foxtrot": 2,
+          "November": -1,
+          "Yankee": 3
+        }
+      }
+    },
+    "numRounds": 0,
+    "players": {
+      "7fba3f00-fc79-11f0-87e5-611d50488b9f": {
+        "experience": "beginner",
+        "gameName": "Yankee",
+        "name": "John Doe",
+        "permissionLevel": "regular"
+      },
+      "9e323be0-fc79-11f0-87e5-611d50488b9f": {
+        "experience": "advanced",
+        "gameName": "November",
+        "name": "Agent 1",
+        "permissionLevel": "regular"
+      },
+      "9e323be1-fc79-11f0-87e5-611d50488b9f": {
+        "experience": "advanced",
+        "gameName": "Delta",
+        "name": "Agent 3",
+        "permissionLevel": "regular"
+      },
+      "9e323be2-fc79-11f0-87e5-611d50488b9f": {
+        "experience": "advanced",
+        "gameName": "Foxtrot",
+        "name": "Agent 2",
+        "permissionLevel": "regular"
+      }
+    }
+  },
+  "publicInfo": {
+    "allowElevatedPermissions": false,
+    "creatorName": "John Doe",
+    "endTime": "2026-01-28T18:47:02.999754Z",
+    "gameCode": "VXQW",
+    "gameParams": {
+      "allowEdit": {
+        "advancedParams": true,
+        "agents": true,
+        "chatType": true,
+        "colorGrouping": true,
+        "gameLength": true,
+        "government": true,
+        "grouping": true,
+        "initialSetup": true,
+        "labels": true,
+        "messageType": true,
+        "nameSet": true,
+        "popularityRandomization": true,
+        "pregame": true,
+        "roundLength": true,
+        "visibilities": true
+      },
+      "chatType": "none",
+      "gameEndCriteria": {
+        "high": 6,
+        "low": 5,
+        "runtimeType": "rounds"
+      },
+      "governmentParams": {
+        "initialPopularity": 2,
+        "initialPopularityType": "multiple",
+        "sendVotesImmediately": true,
+        "taxesFirst": true
+      },
+      "labels": {
+        "enabled": false
+      },
+      "lengthOfRound": 150000000,
+      "messageType": "freeForm",
+      "nameSet": "radio",
+      "popularityFunctionParams": {
+        "alpha": 0.2,
+        "beta": 0.5,
+        "cGive": 1.3,
+        "cKeep": 0.95,
+        "cSteal": 1.6,
+        "povertyLine": 0,
+        "shouldUseNewUpdate": true
+      },
+      "popularityParams": {
+        "randomPopHigh": 200,
+        "randomPopLow": 50,
+        "randomPopularities": false,
+        "rawlsPopularity": false,
+        "usePopAsTokens": false
+      },
+      "show": {
+        "advancedParams": true,
+        "agents": true,
+        "chatType": true,
+        "colorGrouping": true,
+        "gameLength": true,
+        "government": true,
+        "grouping": true,
+        "initialSetup": true,
+        "labels": true,
+        "messageType": true,
+        "nameSet": true,
+        "popularityRandomization": true,
+        "pregame": true,
+        "roundLength": true,
+        "visibilities": true
+      }
+    },
+    "gameParamsSet": true,
+    "gameStarted": true,
+    "gameStatus": "finished",
+    "governmentRoundInfo": {
+      "round": 0
+    },
+    "numObservers": 0,
+    "numPlayers": 4,
+    "playerNames": [
+      "John Doe",
+      "Agent 1",
+      "Agent 3",
+      "Agent 2"
+    ],
+    "processingNewRound": false,
+    "roundEndTime": "2026-01-28T18:49:22.944231Z",
+    "roundNum": 6,
+    "startTime": "2026-01-28T18:46:25.854644Z",
+    "testGame": true,
+    "version": "2.0.11"
+  }
+}
