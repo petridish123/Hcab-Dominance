@@ -271,23 +271,185 @@ number_to_name : dict = {
     2 : "November",
     3 : "Yankee"
 }
+NUMTOKENS : int = 8
+NUMPLAYERS : int = 4
+long_n_vals : dict = {}
+popularity_dict : dict = {}
+
+def x_i_j_pos(tau : int, i :int, j : int) -> float:
+    name_i : str = number_to_name[i]
+    name_j : str = number_to_name[j]
+    round : str = "round_" + str(tau)
+    
+    if allocations_1_4[round][name_i][name_j] > 0:
+        return allocations_1_4[round][name_i][name_j] / NUMTOKENS
+    return 0
+
+def x_i_j_neg(tau : int, i :int, j : int) -> float:
+    name_i : str = number_to_name[i]
+    name_j : str = number_to_name[j]
+    round : str = "round_" + str(tau)
+    
+    if allocations_1_4[round][name_i][name_j] < 0:
+        return allocations_1_4[round][name_i][name_j] / NUMTOKENS
+    return 0
 
 
+def c_steal_k(tau : int, t : int, k: int) -> float:
+    """
+    
+    Docstring for c_steal_k
 
-def c_steal_k(tau : int, t : int) -> float:
-    pass
+    
+    """
+    # input("Continue? (C_steal)")
+    name : str = number_to_name[k]
+    round : str = "round_" + str(tau)
+    time : str = "round_" + str(t)
 
-
+    
+    # Gets the alocations to self in round tau
+    numerator :float = x_i_j_pos(tau,k,k) * W_j(tau,t,k)
+    denominator :float = 0
+    # Get all negative allocations
+    for j in range(NUMPLAYERS):
+        if j == k: continue
+        j_name : str = number_to_name[j]
+        denominator += (x_i_j_neg(tau,j,k)) * W_j(tau,t,j)
+    if denominator == 0:
+        return c_steal
+    return c_steal * max (0, 1 - (numerator / denominator))
+   
 def long_n(tau : int, t : int) -> float:
-    pass
+    """
+    Docstring for long_n
+    
+    :param tau: Description
+    :type tau: int
+    :param t: Description
+    :type t: int
+    :return: Description
+    :rtype: float
+    
+    Takes the sym of all players popularity at tau tau divided by all pop at t, t
+    This normalizes the popularity of older token allocations
+    """
+    # input("Continue? Long N")
+    # print(f"long n : {long_n_vals}")
+    if (tau,t) in long_n_vals:
+        return long_n_vals[(tau,t)]
 
-def W_j(tau : int, t : int) -> float:
-    pass
+    sum_tau_tau = 0
+    sum_t_t = 0
+    for player in range(NUMPLAYERS):
+        sum_tau_tau += popularity_i(tau,tau,player)
+        sum_t_t += popularity_i(t,t,player)
+    long_n_vals[(tau,t)] = sum_tau_tau / sum_t_t 
+    return long_n_vals[(tau,t)]
+
+def W_j(tau : int, t : int, j : int) -> float:
+    """
+    Docstring for W_j
+    
+    :param tau: The round in which it happened
+    :type tau: int
+    :param t: the time at which it is being viewed
+    :type t: int
+    :param j: the player index
+    :type j: int
+    :return: Description
+    :rtype: float
+    
+    This function essentially says "How much does the popularity matter from the past and present, how fleeting is it?"
+    """
+
+    w = beta * popularity_i(tau, tau, j) + (1-beta) * long_n(tau,t) * popularity_i(t,t,j)
+    # print(f"w is : {w}")
+
+    return w
 
 
-def V_i_j(tau : int, t : int) -> float:
-    pass
 
-def influence_i_j(tau : int, t : int) -> float: pass
+def V_i_j(tau : int, t : int, i : int, j : int) -> float:
+    """
+    Docstring for V_i_j
+    
+    :param tau: Description
+    :type tau: int
+    :param t: Description
+    :type t: int
+    :param i: Description
+    :type i: int
+    :param j: Description
+    :type j: int
+    :return: Description
+    :rtype: float
+    """
+    #input("Continue? V")
 
-def popularity_i(tau : int, t : int) -> float: pass
+    name_i : str = number_to_name[i]
+    name_j : str = number_to_name[j]
+    round : str = "round_" + str(tau)
+    time : str = "round_" + str(t)
+
+    if  i == j:
+        total = 0
+        for k in range(NUMPLAYERS):
+            player_k_allocations : float = x_i_j_neg(tau, k,i)
+            total += c_steal_k(tau,t,k) *(player_k_allocations)
+        jawn = W_j(tau, t, i) * (c_keep * x_i_j_pos(tau,i,i) + total )
+        # print(f"jawn: {jawn}, total : {total}, keep: {x_i_j_pos(tau,i,i)}") # for 2,2,2 november keeps 8 then c_keep (.95) * W_i (100) * 8 = 760
+        return jawn
+    
+    else:
+        
+        return W_j(tau, t, j) * (c_give * x_i_j_pos(tau,j,i)  - c_steal_k(tau,t,i) * (x_i_j_neg(tau,i,j)))
+
+
+def influence_i_j(tau : int, t : int, i :int, j:int) -> float: 
+    # input("Continue? Influence")
+    if tau < 1: return 0
+    inf = alpha * V_i_j(tau,t,i,j) + (1-alpha) * influence_i_j(tau - 1, t, i , j)
+    print(f"i : {i}, j: {j}, inf : {inf}")
+    return inf
+
+
+def popularity_i(tau : int, t : int, i : int, p_init :int = 100) -> float: 
+    # input("Continue? popularity")
+    if (tau, t,i) in popularity_dict:
+        return popularity_dict[(tau,t,i)]
+
+    total : float = 0
+    for j in range(NUMPLAYERS):
+        total += influence_i_j(tau-1,t-1,i,j)
+    # print(f"Popularity at tau {tau} time {t} player {i}", max (0, (1-alpha)**(tau-1)*p_init + total))
+    popularity_dict[(tau,t,i)] = max (0, (1-alpha)**(tau-1)*p_init + total) 
+
+    return popularity_dict[(tau,t,i)]
+
+
+def main():
+    print("Please input a comma seperated query that details, round, time, player")
+    while True:
+        answer : str = input("Query or (q): ")
+        answer = answer.strip()
+        if answer == "q":
+            break
+        
+        answers : list = answer.split(",")
+        tau : int
+        t : int
+        player : int
+        
+        try:
+            tau = int(answers[0])
+            t = int(answers[1])
+            player = int(answers[2])
+            print(f"Popularity for player {player} at round {tau} viewed at time {t}" ,popularity_i(tau,t,player))
+        except:
+            print("Incorrect type, please use whole numbers, or in range values")
+        
+        
+
+if __name__ == "__main__":
+    main()
