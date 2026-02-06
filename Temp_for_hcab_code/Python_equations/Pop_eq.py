@@ -410,7 +410,7 @@ def influence_i_j(tau : int, t : int, i :int, j:int) -> float:
     # input("Continue? Influence")
     if tau < 1: return 0
     inf = alpha * V_i_j(tau,t,i,j) + (1-alpha) * influence_i_j(tau - 1, t, i , j)
-    print(f"i : {i}, j: {j}, inf : {inf}")
+    # print(f"i : {i}, j: {j}, inf : {inf}")
     return inf
 
 
