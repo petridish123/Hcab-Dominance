@@ -80,5 +80,7 @@ def new_W_j(tau:int,t:int,j:int, populations : dict =Pop_eq.pop_1_4)->float:
 Here I need to estimate the x_ij for all i in I
 
 Delta_I /(alpha * W_j * c_give)
-
+ TODO:
+ write jake's equation into python and use it to estimate keeping.
+ estimate stealing by taking total num of tokens and finding the difference.
 """
