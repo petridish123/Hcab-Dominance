@@ -80,39 +80,41 @@ def estimate_x_give_j_i(tau :int, t:int, i:int,j:int):
 
     return delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j)* Pop_eq.c_give)
 
-"""
-    virtual double isKeeping(int otherIdx, int numPlayers) {
-        double meAmount = 0.0;
-        double totalAmount = 0.0;
-        for (int i = 0; i < numPlayers; i++) {
-            // if (govPlayers[i]->govPlayer || (i == otherIdx))
-            if (i == otherIdx)
-                continue;
-
-            if (inflNeg[otherIdx][i] > 0.0) {
-                totalAmount += inflNeg[otherIdx][i] / coefs[STEAL_IDX];
-                meAmount -= inflNeg[otherIdx][i];
-            }
-            else {
-                totalAmount += inflPos[otherIdx][i] / coefs[GIVE_IDX];
-            }
-        }
-
-        meAmount = (meAmount + inflPos[otherIdx][otherIdx] - inflNeg[otherIdx][otherIdx]) / coefs[KEEP_IDX];
-        totalAmount += meAmount;
-
-        if (totalAmount > 0.0)
-            return meAmount / totalAmount;
-        else
-            return 1.0;
-    }
-
-
-"""
 
 def estimate_keeping(tau :int, t:int, i:int) -> float:
-    pass
+    """
+    Docstring for estimate_keeping
+    
+    :param tau: Description
+    :type tau: int
+    :param t: Description
+    :type t: int
+    :param i: Description
+    :type i: int
+    :return: Description
+    :rtype: float
+    
+    I need to find out what this john do
+    """
 
+    me_amount : float = 0.0
+    total_amount : float = 0.0
+
+    for j in range(Pop_eq.NUMPLAYERS):
+        if j == i: continue
+
+        change_in_i :float = delta_I(tau,t,i,j) 
+        if  change_in_i < 0:
+            # These are reversed because I take the change in influence rather than negative influence. 
+            total_amount -= change_in_i / Pop_eq.c_steal
+            me_amount += change_in_i
+        else:
+            total_amount += change_in_i / Pop_eq.c_give
+
+    if total_amount > 0:
+        return me_amount / total_amount
+    else:
+        return 1.0
 
 
 
