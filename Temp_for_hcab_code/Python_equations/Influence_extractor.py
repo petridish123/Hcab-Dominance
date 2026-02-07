@@ -131,6 +131,26 @@ Delta_I /(alpha * W_j * c_give)
 """
 
 
+def estimate_allocation_i(tau :int, t: int, i: int):
+    """
+    Docstring for estimate_allocation_i
+    
+    :param tau: Description
+    :type tau: int
+    :param t: Description
+    :type t: int
+    :param i: Description
+    :type i: int
+    
+    This function finds the allocation list of a single player
+    It does this by looping through all delta influence from player i to player j
+    And estimating the allocation to that player.
+    Then it normalizes the allocation (make sure it meets exactly the number of tokens)
+
+    """
+
+# May want to create a function that estimates allocation i for initial allocations then proceeds to do a secondary estimator until convergence.
+
 def main():
     print("Please input a comma seperated query that details, round, time, player")
     while True:
