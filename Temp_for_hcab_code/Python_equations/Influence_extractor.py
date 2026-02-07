@@ -145,11 +145,45 @@ def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
     Then it normalizes the allocation (make sure it meets exactly the number of tokens)
 
     """
-    pass
+    # this will go over all and check giving, then check keeping for self and then check stealing.
+    
+    allocation_list :list[int] = []
+    total_tokens :int = Pop_eq.NUMTOKENS
+    total_used :int = 0
+    # I need to remember to round the floats to the nearest int.
+    for j in range(Pop_eq.NUMPLAYERS):
+        if i == j:
+            pass # do keep
+        else:
+            pass # do give
+    #do steal here
+    total_steal :int = total_tokens - total_used
+    # who to allocate this john to.
+    return allocation_list
 
 # May want to create a function that estimates allocation i for initial allocations then proceeds to do a secondary estimator until convergence.
-def compute_allocation_matrix(tau:int,t:int) -> None:
-    pass
+def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
+    """
+    Docstring for compute_allocation_matrix
+    
+    :param tau: Description
+    :type tau: int
+    :param t: Description
+    :type t: int
+    
+    TODO: This function I need to determine if this will create or modify an allocation matrix
+    if I create, return that
+    else then it needs to be passed in
+
+    """
+
+    allocation_matrix :dict = {}
+    # for each player, estimate the allocations
+    for i in range(Pop_eq.NUMPLAYERS):
+        allocation_matrix[i] = estimate_allocation_i(tau,t,i)
+    
+    return allocation_matrix
+
 
 
 
