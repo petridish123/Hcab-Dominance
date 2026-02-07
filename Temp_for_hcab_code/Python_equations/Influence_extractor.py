@@ -118,9 +118,6 @@ def estimate_keeping(tau :int, t:int, i:int) -> float:
 
 
 
-
-
-
 """
 Here I need to estimate the x_ij for all i in I
 
@@ -131,7 +128,7 @@ Delta_I /(alpha * W_j * c_give)
 """
 
 
-def estimate_allocation_i(tau :int, t: int, i: int):
+def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
     """
     Docstring for estimate_allocation_i
     
@@ -148,8 +145,13 @@ def estimate_allocation_i(tau :int, t: int, i: int):
     Then it normalizes the allocation (make sure it meets exactly the number of tokens)
 
     """
+    pass
 
 # May want to create a function that estimates allocation i for initial allocations then proceeds to do a secondary estimator until convergence.
+def compute_allocation_matrix(tau:int,t:int) -> None:
+    pass
+
+
 
 def main():
     print("Please input a comma seperated query that details, round, time, player")
