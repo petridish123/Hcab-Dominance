@@ -60,7 +60,7 @@ def new_W_j(tau:int,t:int,j:int, populations : dict =Pop_eq.pop_1_4)->float:
     return Pop_eq.beta * populations[round][name_j]+ (1-Pop_eq.beta) * Pop_eq.long_n(tau,t) * populations[time][name_j]
 
 
-def estimate_x_give_j_i(tau :int, t:int, i:int,j:int):
+def estimate_x_give_j_i(tau :int, t:int, i:int,j:int) -> float:
     """
     Docstring for estimate_x_give_j_i
     
@@ -75,6 +75,11 @@ def estimate_x_give_j_i(tau :int, t:int, i:int,j:int):
     
     This is the ammount estimated that i gave to j (x_j_i)
     """
+
+    # I think this needs to check and make sure that delta_I is positive
+    if delta_I(tau,t,i,j) < 0:
+        return 0.0
+    # This is an estimate of keeping but this may not be needed with Jake's code now
     if i == j:
         return delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j)* Pop_eq.c_keep)
 
@@ -117,17 +122,6 @@ def estimate_keeping(tau :int, t:int, i:int) -> float:
         return 1.0
 
 
-
-"""
-Here I need to estimate the x_ij for all i in I
-
-Delta_I /(alpha * W_j * c_give)
- TODO:
- write jake's equation into python and use it to estimate keeping.
- estimate stealing by taking total num of tokens and finding the difference.
-"""
-
-
 def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
     """
     Docstring for estimate_allocation_i
@@ -153,11 +147,16 @@ def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
     # I need to remember to round the floats to the nearest int.
     for j in range(Pop_eq.NUMPLAYERS):
         if i == j:
-            pass # do keep
+            tokens = estimate_keeping(tau,t,i)
+            allocation_list[j] = tokens
+            total_used += tokens
         else:
-            pass # do give
+            tokens = estimate_x_give_j_i(tau,t,i,j)
+            allocation_list[j] = tokens
+            total_used += tokens
     #do steal here
     total_steal :int = total_tokens - total_used
+    print(f"This is the amount player {i} stole {total_steal}")
     # who to allocate this john to.
     return allocation_list
 
@@ -171,10 +170,7 @@ def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
     :param t: Description
     :type t: int
     
-    TODO: This function I need to determine if this will create or modify an allocation matrix
-    if I create, return that
-    else then it needs to be passed in
-
+    This function creates and returns an allocation matrix for each player
     """
 
     allocation_matrix :dict = {}
