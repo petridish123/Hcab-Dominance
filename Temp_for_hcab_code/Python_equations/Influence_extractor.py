@@ -173,12 +173,12 @@ def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
     for j in range(Pop_eq.NUMPLAYERS):
         if i == j:
             tokens = clamp(estimate_keeping(tau,t,i) * Pop_eq.NUMTOKENS, 0, Pop_eq.NUMTOKENS)
-            print(f"Is this right? : {tokens}")
+            # print(f"Is this right? : {tokens}")
             allocation_list[j] = tokens
             total_used += tokens
         else:
             tokens = clamp(estimate_x_give_j_i(tau,t,j,i) * Pop_eq.NUMTOKENS,0,Pop_eq.NUMTOKENS)
-            print(f'tokens : {tokens}')
+            # print(f'tokens : {tokens}')
             allocation_list[j] = tokens
             total_used += tokens
     #do steal here
@@ -209,7 +209,11 @@ def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
     
     return allocation_matrix
 
-
+def pretty_print_dict(this_dict : dict) -> str:
+    output = ""
+    for key, value in this_dict.items():
+        output += str(key) + " : " + str(value) + "\n"
+    return output
 
 
 def main():
@@ -236,6 +240,7 @@ def main():
             print(e)
             print("Incorrect type, please use whole numbers, or in range values")
 
+    print(pretty_print_dict(compute_allocation_matrix(tau,t)))
    
 
 if __name__ == "__main__":
