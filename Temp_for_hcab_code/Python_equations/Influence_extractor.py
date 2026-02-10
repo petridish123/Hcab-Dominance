@@ -186,7 +186,21 @@ def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
     total_steal :int = total_tokens - total_used
     print(f"This is the amount player {i} stole {total_steal}")
     # who to allocate this john to.
-    return allocation_list
+    return allocation_list, total_steal
+
+def normalize_allocations(allocations : list, stole: list) -> list:
+    """
+    This is going to take in the allocations and attempt to normalize to some extent
+    
+    remember, if there is evidence of stealing, it is likely that the amount stolen should be deducted from the keep amount
+    
+    might want to look at the overall matrix. 
+    If stole < 0, likely was stolen from, so check that player's allocations
+    """
+
+   
+
+
 
 # May want to create a function that estimates allocation i for initial allocations then proceeds to do a secondary estimator until convergence.
 def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
@@ -202,10 +216,13 @@ def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
     """
 
     allocation_matrix :dict = {}
+    stole_mat : dict = {}
     # for each player, estimate the allocations
     
     for i in range(Pop_eq.NUMPLAYERS):
-        allocation_matrix[i] = estimate_allocation_i(tau,t,i)
+        allocations, stole_ammt = estimate_allocation_i(tau,t,i) 
+        allocation_matrix[i] = allocations
+        stole_mat[i] = stole_ammt
     
     return allocation_matrix
 
