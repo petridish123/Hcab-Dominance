@@ -120,7 +120,67 @@ influence_1_4 : dict = {
           "November": 0,
           "Yankee": 3.5431070192290046,
           "__intrinsic__": 51.20000000000001
+        },
+      "round_5": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 20.441087521971287,
+          "__intrinsic__": 40.96000000000001
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 10.621157681219428,
+          "November": 0,
+          "Yankee": 9.816417357662111,
+          "__intrinsic__": 40.96000000000001
+        },
+        "November": {
+          "Delta": 64.44131584139498,
+          "Foxtrot": 20.114237535605668,
+          "November": 60.48318975406073,
+          "Yankee": 26.655848972595248,
+          "__intrinsic__": 40.96000000000001
+        },
+        "Yankee": {
+          "Delta": 0,
+          "Foxtrot": 24.11266030723516,
+          "November": 51.539228503561326,
+          "Yankee": 8.38620580899126,
+          "__intrinsic__": 40.96000000000001
         }
+      },
+      "round_6": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 55.29019394695073,
+          "Yankee": 9.389009779355066,
+          "__intrinsic__": 32.76800000000001
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 19.039231569667844,
+          "November": 0,
+          "Yankee": 17.45666994114275,
+          "__intrinsic__": 32.76800000000001
+        },
+        "November": {
+          "Delta": 45.07249205874421,
+          "Foxtrot": 14.129224549453012,
+          "November": 49.00412218975415,
+          "Yankee": 20.674501982970124,
+          "__intrinsic__": 32.76800000000001
+        },
+        "Yankee": {
+          "Delta": 15.964282755712539,
+          "Foxtrot": 17.182896214935536,
+          "November": 41.6864012957734,
+          "Yankee": 32.019758701171114,
+          "__intrinsic__": 32.76800000000001
+        }
+      }
       }
       }
 
@@ -148,6 +208,18 @@ pop_1_4 : dict = {
         "Foxtrot": 77.3624520600218,
         "November": 198.2278019367743,
         "Yankee": 82.7894325541726
+      },
+      "round_5": {
+        "Delta": 61.40108752197129,
+        "Foxtrot": 61.39757503888155,
+        "November": 212.65459210365663,
+        "Yankee": 124.99809461978776
+      },
+      "round_6": {
+        "Delta": 97.44720372630582,
+        "Foxtrot": 69.2639015108106,
+        "November": 161.6483407809215,
+        "Yankee": 139.6213389675926
       }
     }
 
@@ -253,6 +325,32 @@ allocations_1_4 : dict = {
           "Delta": 0,
           "Foxtrot": 0,
           "November": 5,
+          "Yankee": 3
+        }
+      },
+      "round_5": {
+        "Delta": {
+          "Delta": 0,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 8
+        },
+        "Foxtrot": {
+          "Delta": 0,
+          "Foxtrot": 8,
+          "November": 0,
+          "Yankee": 0
+        },
+        "November": {
+          "Delta": 8,
+          "Foxtrot": 0,
+          "November": 0,
+          "Yankee": 0
+        },
+        "Yankee": {
+          "Delta": -2,
+          "Foxtrot": 2,
+          "November": -1,
           "Yankee": 3
         }
       }

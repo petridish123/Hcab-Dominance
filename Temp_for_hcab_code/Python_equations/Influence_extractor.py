@@ -6,7 +6,8 @@ This is going to try and
 """
 import Pop_eq
 
-
+def clamp(n : float, smallest:int = 0, largest:int = 10) ->float:
+    return max(smallest, min(n,largest))
 
 def delta_I(tau :int, t:int,i :int, j:int) -> float:
     """
@@ -99,26 +100,49 @@ def estimate_keeping(tau :int, t:int, i:int) -> float:
     :return: Description
     :rtype: float
     
-    I need to find out what this john do
+
+    fr each player that isn't myself do this{
+        Get the change in influence
+        if the change in influence is negative from other player to me
+    }
+
+    Note for me about the neg influence
+    in the jhg code, they take the influence, and negate it. If the index
+    is positive, that means that it was negative and thus was a steal.
+    For me since I get delta influence, I need to instead do the opposite
+    of what they do. That is correct.
+
     """
 
     me_amount : float = 0.0
     total_amount : float = 0.0
 
     for j in range(Pop_eq.NUMPLAYERS):
+        # don't check against this player
         if j == i: continue
 
-        change_in_i :float = delta_I(tau,t,i,j) 
+        # Get the change in influence
+        change_in_i :float = delta_I(tau,t,j,i) # I need to make sure this is correct. It is from i to j RAHHH
+
+        # If there is a negative interaction try to estimate 
         if  change_in_i < 0:
             # These are reversed because I take the change in influence rather than negative influence. 
-            total_amount -= change_in_i / Pop_eq.c_steal
-            me_amount += change_in_i
-        else:
-            total_amount += change_in_i / Pop_eq.c_give
+            total_amount -= change_in_i / Pop_eq.c_steal # Change in influence divided by the coef_steal. This will get the estimated amount of stealing
+            me_amount += change_in_i # Still not sure what me_amount does 
+        else: # if the change in i is 0 or positive
+            # Estimate how much we are given
+            total_amount += change_in_i / Pop_eq.c_give # Why not W_j?
+
+    # This updates the amount that was kept
+    me_amount = (me_amount + delta_I(tau,t,i,i)) / Pop_eq.c_keep
+    total_amount += me_amount
 
     if total_amount > 0:
+        # This tries to estimate how much i kept percentage
         return me_amount / total_amount
     else:
+        print("something off?")
+        print(total_amount)
         return 1.0
 
 
@@ -141,20 +165,24 @@ def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
     """
     # this will go over all and check giving, then check keeping for self and then check stealing.
     
-    allocation_list :list[int] = []
+    allocation_list :list[int] = [0 for i in range(Pop_eq.NUMPLAYERS)]
+    
     total_tokens :int = Pop_eq.NUMTOKENS
     total_used :int = 0
     # I need to remember to round the floats to the nearest int.
     for j in range(Pop_eq.NUMPLAYERS):
         if i == j:
-            tokens = estimate_keeping(tau,t,i)
+            tokens = clamp(estimate_keeping(tau,t,i) * Pop_eq.NUMTOKENS, 0, Pop_eq.NUMTOKENS)
+            print(f"Is this right? : {tokens}")
             allocation_list[j] = tokens
             total_used += tokens
         else:
-            tokens = estimate_x_give_j_i(tau,t,i,j)
+            tokens = clamp(estimate_x_give_j_i(tau,t,j,i) * Pop_eq.NUMTOKENS,0,Pop_eq.NUMTOKENS)
+            print(f'tokens : {tokens}')
             allocation_list[j] = tokens
             total_used += tokens
     #do steal here
+    # remember that if the person likely stole, the amount they kept is probably lower than it says
     total_steal :int = total_tokens - total_used
     print(f"This is the amount player {i} stole {total_steal}")
     # who to allocate this john to.
@@ -175,6 +203,7 @@ def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
 
     allocation_matrix :dict = {}
     # for each player, estimate the allocations
+    
     for i in range(Pop_eq.NUMPLAYERS):
         allocation_matrix[i] = estimate_allocation_i(tau,t,i)
     
@@ -201,9 +230,10 @@ def main():
             tau = int(answers[0])
             t = int(answers[1])
             player_i = int(answers[2])
-            player_j = int(answers[3])
-            print(f"tokens given from player {player_j} to player {player_i}: " ,estimate_x_give_j_i(tau,t,player_i, player_j) * Pop_eq.NUMTOKENS)
-        except:
+            player_j = 3 #int(answers[3])
+            print(f"Estimating allocation of player {player_i} " ,estimate_allocation_i(tau,t,player_i))
+        except Exception as e:
+            print(e)
             print("Incorrect type, please use whole numbers, or in range values")
 
    
