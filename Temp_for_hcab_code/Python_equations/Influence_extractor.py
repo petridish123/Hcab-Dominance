@@ -194,11 +194,9 @@ def normalize_allocations(allocations : list, stole: list) -> list:
     
     remember, if there is evidence of stealing, it is likely that the amount stolen should be deducted from the keep amount
     
-    might want to look at the overall matrix. 
-    If stole < 0, likely was stolen from, so check that player's allocations
-    """
 
-   
+    """
+    
 
 
 
@@ -258,8 +256,6 @@ def main():
             print(e)
             print("Incorrect type, please use whole numbers, or in range values")
 
-
-   
 
 if __name__ == "__main__":
     main()
