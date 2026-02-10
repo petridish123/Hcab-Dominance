@@ -233,14 +233,15 @@ def main():
         try:
             tau = int(answers[0])
             t = int(answers[1])
-            player_i = int(answers[2])
+            player_i = 3 #int(answers[2])
             player_j = 3 #int(answers[3])
-            print(f"Estimating allocation of player {player_i} " ,estimate_allocation_i(tau,t,player_i))
+            print(pretty_print_dict(compute_allocation_matrix(tau,t)))
+            # print(f"Estimating allocation of player {player_i} " ,estimate_allocation_i(tau,t,player_i))
         except Exception as e:
             print(e)
             print("Incorrect type, please use whole numbers, or in range values")
 
-    print(pretty_print_dict(compute_allocation_matrix(tau,t)))
+
    
 
 if __name__ == "__main__":
