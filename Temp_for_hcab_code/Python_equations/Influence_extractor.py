@@ -188,14 +188,17 @@ def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
     # who to allocate this john to.
     return allocation_list, total_steal
 
-def normalize_allocations(allocations : list, stole: list) -> list:
+def normalize_allocations(allocations : dict, stole: list) -> list:
     """
     This is going to take in the allocations and attempt to normalize to some extent
     
     remember, if there is evidence of stealing, it is likely that the amount stolen should be deducted from the keep amount
     
-
+    This will look at all of them. If there is stealing, look at the left over influence from each person
     """
+    for i, allocation in allocations.items():
+        # if the total + stealing = 8 (abs of stealing) then its all good ?
+        pass
     
 
 
