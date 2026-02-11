@@ -198,8 +198,14 @@ def normalize_allocations(allocations : dict, stole: list) -> list:
     """
     for i, allocation in allocations.items():
         # if the total + stealing = 8 (abs of stealing) then its all good ?
-        pass
-    
+        total = sum(allocation)
+        total += abs(sum(stole))
+        if total == 8: continue
+
+        # I need to allocate the stolen
+        # Maybe look at the influences and see where I got the most from.
+        # Look at the equations and see where the stolen is allocated to.
+        # The equation doesn't take into account if it was given or stolen. So we need to somehow differentiate the two
 
 
 
