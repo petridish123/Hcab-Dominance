@@ -188,7 +188,7 @@ def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
     # who to allocate this john to.
     return allocation_list, total_steal
 
-def normalize_allocations(allocations : dict, stole: list) -> list:
+def normalize_allocations(allocations : dict, stole: dict, tau:int, t:int) -> list:
     """
     This is going to take in the allocations and attempt to normalize to some extent
     
@@ -206,8 +206,19 @@ def normalize_allocations(allocations : dict, stole: list) -> list:
         # Maybe look at the influences and see where I got the most from.
         # Look at the equations and see where the stolen is allocated to.
         # The equation doesn't take into account if it was given or stolen. So we need to somehow differentiate the two
+        """
+        For each player, check the influence and solve for the ammount stolen from them
+        since they already have the allocations of given to me :)
+        
+        """
+        stolen :list = [0 for i in range(Pop_eq.NUMPLAYERS)]
+        for player in range(Pop_eq.NUMPLAYERS):
+
+            pass # This will look at the influence and solve the stolen equation rather than the give equation
 
 
+def get_stolen_x_i_j(i:int, j:int, delta_I:float) -> float:
+    pass
 
 # May want to create a function that estimates allocation i for initial allocations then proceeds to do a secondary estimator until convergence.
 def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
