@@ -398,6 +398,7 @@ def c_steal_k(tau : int, t : int, k: int) -> float:
     
     Docstring for c_steal_k
 
+    This function uses the true allocations, not the predicted
     
     """
     # input("Continue? (C_steal)")

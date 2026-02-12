@@ -217,8 +217,13 @@ def normalize_allocations(allocations : dict, stole: dict, tau:int, t:int) -> li
             pass # This will look at the influence and solve the stolen equation rather than the give equation
 
 
-def get_stolen_x_i_j(i:int, j:int, delta_I:float) -> float:
-    pass
+def get_stolen_x_i_j(tau: int, t:int,i:int, j:int, allocations : dict) -> float:
+    # This will get the all that but instead - new_w_j * popeq.c_give * the give allocation all divided by c_steal
+    return ((delta_I(tau,t,i,j)/ (Pop_eq.alpha)) - new_W_j(tau,t,j)* Pop_eq.c_give * allocations[j][i]) / Pop_eq.c_steal # Allocations from j to i?
+
+def estimated_c_steal_k(tau:int, t:int,k : int, allocations : dict) -> float:
+    pass # This is going to take the allocations and use that for the c_steal calculation
+
 
 # May want to create a function that estimates allocation i for initial allocations then proceeds to do a secondary estimator until convergence.
 def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
