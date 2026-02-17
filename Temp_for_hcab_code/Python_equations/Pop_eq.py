@@ -389,7 +389,7 @@ def x_i_j_neg(tau : int, i :int, j : int) -> float:
     round : str = "round_" + str(tau)
     
     if allocations_1_4[round][name_i][name_j] < 0:
-        return allocations_1_4[round][name_i][name_j] / NUMTOKENS
+        return -allocations_1_4[round][name_i][name_j] / NUMTOKENS # if things go to crap, make this positive
     return 0
 
 
@@ -502,7 +502,7 @@ def V_i_j(tau : int, t : int, i : int, j : int) -> float:
     
     else:
         
-        return W_j(tau, t, j) * (c_give * x_i_j_pos(tau,j,i)  - c_steal_k(tau,t,i) * (x_i_j_neg(tau,i,j)))
+        return W_j(tau, t, j) * (c_give * x_i_j_pos(tau,j,i)  - c_steal_k(tau,t,i) * (x_i_j_neg(tau,j,i)))
 
 
 def influence_i_j(tau : int, t : int, i :int, j:int) -> float: 

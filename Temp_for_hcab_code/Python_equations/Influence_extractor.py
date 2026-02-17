@@ -34,8 +34,7 @@ def delta_I(tau :int, t:int,i :int, j:int) -> float:
 
     influence_tau = Pop_eq.influence_i_j(tau,t,i,j)
     influence_tau_minus =  Pop_eq.influence_i_j(tau - 1,t,i,j)
-
-    return influence_tau - (1-Pop_eq.alpha) *influence_tau_minus
+    return influence_tau - (1-Pop_eq.alpha) * influence_tau_minus
 
 
 def new_W_j(tau:int,t:int,j:int, populations : dict =Pop_eq.pop_1_4)->float:
@@ -86,6 +85,41 @@ def estimate_x_give_j_i(tau :int, t:int, i:int,j:int) -> float:
 
     return delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j)* Pop_eq.c_give)
 
+
+def estimate_x_allocate_j_i(tau :int, t:int, i:int,j:int) -> float:
+    """
+    Docstring for estimate_x_give_j_i
+    
+    :param tau: Description
+    :type tau: int
+    :param t: Description
+    :type t: int
+    :param i: Description
+    :type i: int
+    :param j: Description
+    :type j: int
+    
+    This is the ammount estimated that i gave to j (x_j_i)
+    """
+
+    # I think this needs to check and make sure that delta_I is positive
+    # if delta_I(tau,t,i,j) < 0:
+    #     return 0.0
+    # This is an estimate of keeping but this may not be needed with Jake's code now
+    if i == j:
+        return delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j)* Pop_eq.c_keep)
+    else:
+        new_val = delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j))
+        print("GYAH")
+        print(new_val)
+        print()
+        if new_val >= 0:
+            return new_val / (Pop_eq.c_give)
+        else:
+            print("PLREAS")
+            print(f"i : {i}, j:{j}")
+            print(new_val/Pop_eq.c_steal)
+            return  new_val / Pop_eq.c_steal
 
 def estimate_keeping(tau :int, t:int, i:int) -> float:
     """
@@ -171,13 +205,16 @@ def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
     total_used :int = 0
     # I need to remember to round the floats to the nearest int.
     for j in range(Pop_eq.NUMPLAYERS):
+        print(f"i : {i}, j : {j}")
+        print(delta_I(tau,t,j,i))
         if i == j:
             tokens = clamp(estimate_keeping(tau,t,i) * Pop_eq.NUMTOKENS, 0, Pop_eq.NUMTOKENS)
             # print(f"Is this right? : {tokens}")
             allocation_list[j] = tokens
             total_used += tokens
         else:
-            tokens = clamp(estimate_x_give_j_i(tau,t,j,i) * Pop_eq.NUMTOKENS,0,Pop_eq.NUMTOKENS)
+            # tokens = clamp(estimate_x_give_j_i(tau,t,j,i) * Pop_eq.NUMTOKENS,0,Pop_eq.NUMTOKENS)
+            tokens = clamp(estimate_x_allocate_j_i(tau,t,j,i) * Pop_eq.NUMTOKENS,-Pop_eq.NUMTOKENS,Pop_eq.NUMTOKENS)
             # print(f'tokens : {tokens}')
             allocation_list[j] = tokens
             total_used += tokens
@@ -190,39 +227,36 @@ def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
 
 def normalize_allocations(allocations : dict, stole: dict, tau:int, t:int) -> list:
     """
-    This is going to take in the allocations and attempt to normalize to some extent
+    Take each allocation list, round each allocation. Sum them and if > 8 then try clipping from keep.
+    If there is less than 8, send the rest to keep.
     
-    remember, if there is evidence of stealing, it is likely that the amount stolen should be deducted from the keep amount
-    
-    This will look at all of them. If there is stealing, look at the left over influence from each person
     """
-    for i, allocation in allocations.items():
-        # if the total + stealing = 8 (abs of stealing) then its all good ?
-        total = sum(allocation)
-        total += abs(sum(stole))
-        if total == 8: continue
 
-        # I need to allocate the stolen
-        # Maybe look at the influences and see where I got the most from.
-        # Look at the equations and see where the stolen is allocated to.
-        # The equation doesn't take into account if it was given or stolen. So we need to somehow differentiate the two
-        """
-        For each player, check the influence and solve for the ammount stolen from them
-        since they already have the allocations of given to me :)
-        
-        """
-        stolen :list = [0 for i in range(Pop_eq.NUMPLAYERS)]
-        for player in range(Pop_eq.NUMPLAYERS):
-
-            pass # This will look at the influence and solve the stolen equation rather than the give equation
 
 
 def get_stolen_x_i_j(tau: int, t:int,i:int, j:int, allocations : dict) -> float:
     # This will get the all that but instead - new_w_j * popeq.c_give * the give allocation all divided by c_steal
-    return ((delta_I(tau,t,i,j)/ (Pop_eq.alpha)) - new_W_j(tau,t,j)* Pop_eq.c_give * allocations[j][i]) / Pop_eq.c_steal # Allocations from j to i?
+    stolen_list :list = [0 for i in range(Pop_eq.NUMPLAYERS)]
+    for k in range(Pop_eq.NUMPLAYERS):
+        if k == j: continue
+        stolen_list[k] = ((delta_I(tau,t,i,j)/ (Pop_eq.alpha)) - new_W_j(tau,t,j)* max(Pop_eq.c_give * allocations[j][i], 1) ) / estimated_c_steal_k(tau,t,k,allocations) # Allocations from j to i?
+    return stolen_list
+
 
 def estimated_c_steal_k(tau:int, t:int,k : int, allocations : dict) -> float:
-    pass # This is going to take the allocations and use that for the c_steal calculation
+     # This is going to take the allocations and use that for the c_steal calculation
+    total :float = 0
+    real_total : float = 0
+    for j in range(len(allocations[k])):
+        allocation = allocations[k][j]
+        if allocation < 0:
+            total += allocation
+            real_total += allocation * new_W_j(tau,t,j)
+    
+    if total < 0:
+        return Pop_eq.c_steal * max(0, 1- ( allocations[k][k] * new_W_j(tau,t,k) / (real_total) ) )
+    else:
+        return Pop_eq.c_steal
 
 
 # May want to create a function that estimates allocation i for initial allocations then proceeds to do a secondary estimator until convergence.
@@ -246,6 +280,8 @@ def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
         allocations, stole_ammt = estimate_allocation_i(tau,t,i) 
         allocation_matrix[i] = allocations
         stole_mat[i] = stole_ammt
+
+    normalize_allocations(allocation_matrix,stole_mat,tau,t)
     
     return allocation_matrix
 
@@ -284,3 +320,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+"""
+Goal for today, get stealing to allocate to the right person
+
+"""
