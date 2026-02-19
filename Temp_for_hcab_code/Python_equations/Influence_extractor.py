@@ -5,7 +5,7 @@ This is going to try and
 
 """
 import Pop_eq
-
+import math
 def clamp(n : float, smallest:int = 0, largest:int = 10) ->float:
     return max(smallest, min(n,largest))
 
@@ -31,9 +31,27 @@ def delta_I(tau :int, t:int,i :int, j:int) -> float:
     # Should not 
     if tau < 1: 
         raise ValueError("Should not calculate rounds less than 1")
+    round_name = "round_" + str(tau)
+    last_round_name = "round_" + str(tau-1)
 
-    influence_tau = Pop_eq.influence_i_j(tau,t,i,j)
-    influence_tau_minus =  Pop_eq.influence_i_j(tau - 1,t,i,j)
+    i_name = Pop_eq.number_to_name[i]
+    j_name = Pop_eq.number_to_name[j]
+    print(f"{tau} {t}, {i}, {j}")
+    if math.isclose(Pop_eq.influence_i_j(tau,t,i,j), Pop_eq.influence_1_4[round_name][i_name][j_name], rel_tol= 1e-2) and Pop_eq.influence_1_4[round_name][i_name][j_name] != 0:
+        print("\n\n Ypieee \n\n")
+    else:
+        print()
+        print(Pop_eq.influence_i_j(tau,t,i,j), Pop_eq.influence_1_4[round_name][i_name][j_name])
+        print()
+
+    # influence_tau = print(Pop_eq.influence_i_j(tau,t,i,j) == Pop_eq.influence_1_4[round_name][j_name][i_name])
+    # influence_tau_minus =  print(Pop_eq.influence_i_j(tau - 1,t,i,j))
+    influence_tau = Pop_eq.influence_1_4[round_name][i_name][j_name]
+    if tau - 1 >= 0:
+        influence_tau_minus = 0
+    else:
+        influence_tau_minus = Pop_eq.influence_1_4[last_round_name][i_name][j_name]
+    # print("HERE")
     return influence_tau - (1-Pop_eq.alpha) * influence_tau_minus
 
 
@@ -110,15 +128,15 @@ def estimate_x_allocate_j_i(tau :int, t:int, i:int,j:int) -> float:
         return delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j)* Pop_eq.c_keep)
     else:
         new_val = delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j))
-        print("GYAH")
-        print(new_val)
-        print()
+        # print("GYAH")
+        # print(new_val)
+        # print()
         if new_val >= 0:
             return new_val / (Pop_eq.c_give)
         else:
-            print("PLREAS")
-            print(f"i : {i}, j:{j}")
-            print(new_val/Pop_eq.c_steal)
+            # print("PLREAS")
+            # print(f"i : {i}, j:{j}")
+            # print(new_val/Pop_eq.c_steal)
             return  new_val / Pop_eq.c_steal
 
 def estimate_keeping(tau :int, t:int, i:int) -> float:
@@ -156,7 +174,7 @@ def estimate_keeping(tau :int, t:int, i:int) -> float:
         if j == i: continue
 
         # Get the change in influence
-        change_in_i :float = delta_I(tau,t,j,i) # I need to make sure this is correct. It is from i to j RAHHH
+        change_in_i :float = delta_I(tau,t,i,j) # I need to make sure this is correct. It is from i to j RAHHH
 
         # If there is a negative interaction try to estimate 
         if  change_in_i < 0:
@@ -173,6 +191,7 @@ def estimate_keeping(tau :int, t:int, i:int) -> float:
 
     if total_amount > 0:
         # This tries to estimate how much i kept percentage
+        # if me_amount < 0: print(f"me_amount : {me_amount}")
         return me_amount / total_amount
     else:
         print("something off?")
@@ -205,8 +224,8 @@ def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
     total_used :int = 0
     # I need to remember to round the floats to the nearest int.
     for j in range(Pop_eq.NUMPLAYERS):
-        print(f"i : {i}, j : {j}")
-        print(delta_I(tau,t,j,i))
+        # print(f"i : {i}, j : {j}")
+        # print(delta_I(tau,t,j,i))
         if i == j:
             tokens = clamp(estimate_keeping(tau,t,i) * Pop_eq.NUMTOKENS, 0, Pop_eq.NUMTOKENS)
             # print(f"Is this right? : {tokens}")
@@ -221,18 +240,34 @@ def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
     #do steal here
     # remember that if the person likely stole, the amount they kept is probably lower than it says
     total_steal :int = total_tokens - total_used
-    print(f"This is the amount player {i} stole {total_steal}")
+    # print(f"This is the amount player {i} stole {total_steal}")
     # who to allocate this john to.
     return allocation_list, total_steal
 
-def normalize_allocations(allocations : dict, stole: dict, tau:int, t:int) -> list:
+def normalize_allocations(allocations : dict, tau:int, t:int) -> dict:
     """
     Take each allocation list, round each allocation. Sum them and if > 8 then try clipping from keep.
     If there is less than 8, send the rest to keep.
     
+    sum up the abs(all other player allocations) round each one.
+    If that sum is greater, deal with it
+    set the difference from the total and that sum equal to the keeping.
+    clamp( 0, maxtokens)
+
     """
 
+    # Allocations is the dict of all
+    # Stole... do I need?
 
+    for i, allocation in allocations.items():
+        temp_total = 0
+        for j in range(len(allocation)):
+
+            if j == i :continue
+            allocation[j] = round( allocation[j] )
+            temp_total += round( abs( allocation[j] ) ) # Round the number then add it to the total
+        allocation[i] = clamp(Pop_eq.NUMTOKENS-temp_total,0,Pop_eq.NUMTOKENS)
+    return allocations
 
 def get_stolen_x_i_j(tau: int, t:int,i:int, j:int, allocations : dict) -> float:
     # This will get the all that but instead - new_w_j * popeq.c_give * the give allocation all divided by c_steal
@@ -281,7 +316,7 @@ def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
         allocation_matrix[i] = allocations
         stole_mat[i] = stole_ammt
 
-    normalize_allocations(allocation_matrix,stole_mat,tau,t)
+    normalize_allocations(allocation_matrix,tau,t)
     
     return allocation_matrix
 
@@ -305,17 +340,17 @@ def main():
         t : int
         player_i : int
         player_j : int
-        
-        try:
+        if True:
+        # try:
             tau = int(answers[0])
             t = int(answers[1])
             player_i = 3 #int(answers[2])
             player_j = 3 #int(answers[3])
             print(pretty_print_dict(compute_allocation_matrix(tau,t)))
             # print(f"Estimating allocation of player {player_i} " ,estimate_allocation_i(tau,t,player_i))
-        except Exception as e:
-            print(e)
-            print("Incorrect type, please use whole numbers, or in range values")
+        # except Exception as e:
+        #     print(e)
+        #     print("Incorrect type, please use whole numbers, or in range values")
 
 
 if __name__ == "__main__":

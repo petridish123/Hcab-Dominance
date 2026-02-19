@@ -229,7 +229,7 @@ class GeneAgent3(AbstractAgent):
         return theStr
 
 
-    def play_round(self, player_idx, round_num, received, popularities, influence, extra_data):
+    def play_round(self, player_idx, round_num, received :list, popularities : list, influence : list[list], extra_data):
         self.printT(player_idx, str(received))
 
         # set up some variables
