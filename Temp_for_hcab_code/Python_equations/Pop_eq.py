@@ -538,13 +538,15 @@ def main():
         answers : list = answer.split(",")
         tau : int
         t : int
-        player : int
+        player_1 : int
+        player_2 : int
         
         try:
             tau = int(answers[0])
             t = int(answers[1])
-            player = int(answers[2])
-            print(f"Popularity for player {player} at round {tau} viewed at time {t}" ,popularity_i(tau,t,player))
+            player_1 = int(answers[2])
+            player_2 = int(answers[3])
+            print(f"...:" ,influence_i_j(tau, t,player_1, player_2))
         except:
             print("Incorrect type, please use whole numbers, or in range values")
         
@@ -552,3 +554,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
