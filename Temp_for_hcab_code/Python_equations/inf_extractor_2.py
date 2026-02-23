@@ -106,11 +106,30 @@ class GameParser:
         sum_tau_tau : int = 0
         sum_t_t : int = 0
         this_round : str = "round_" + str(tau)
+        that_round : str = "round_" + str(t)
         for i in range(self.numplayer):
             sum_tau_tau += self.popularities[this_round][self.player_names[i]]
             # also need to get sum t t
+            sum_t_t += self.popularities[that_round][self.player_names[i]]
         
         if not sum_t_t: sum_t_t = 1
 
         self.long_n_vals[(tau,t)] = sum_tau_tau / sum_t_t
         return self.long_n_vals[(tau,t)]
+    
+    def W_j(self, tau:int, t:int, j:int) -> float:
+        this_round : str = "round_" + str(tau)
+        that_round : str = "round_" + str(t)
+        # split up the return statement
+        return self.params["beta"] * self.popularities[this_round][self.player_names[j]] + (1-self.params["beta"]) * self.long_n(tau,t) * self.popularities[that_round][self.player_names[j]] 
+
+    def influence_i_j(self, tau:int, t:int, i:int, j:int):
+        """
+        
+        """
+        this_round : str = "round_" + str(tau)
+        that_round : str = "round_" + str(t)
+        name_i :str = self.player_names[i]
+        name_j :str = self.player_names[j]
+
+        
