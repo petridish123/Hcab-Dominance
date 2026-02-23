@@ -132,4 +132,5 @@ class GameParser:
         name_i :str = self.player_names[i]
         name_j :str = self.player_names[j]
 
-                
+        # Need to recieve the influence from this past round
+        # Use self.allocations. this will be where I place all my allocations that I estimate        
