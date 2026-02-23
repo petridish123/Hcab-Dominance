@@ -132,4 +132,4 @@ class GameParser:
         name_i :str = self.player_names[i]
         name_j :str = self.player_names[j]
 
-        
+                
