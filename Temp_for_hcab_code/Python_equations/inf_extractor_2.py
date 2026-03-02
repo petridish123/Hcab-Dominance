@@ -133,4 +133,35 @@ class GameParser:
         name_j :str = self.player_names[j]
 
         # Need to recieve the influence from this past round
-        # Use self.allocations. this will be where I place all my allocations that I estimate        
+        # Use self.allocations. this will be where I place all my allocations that I estimate
+        # 
+        if tau == 0:
+            return 0   
+
+        return self.params["alpha"] * self.V_i_j(tau,t,i,j) + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j)     
+
+
+    def V_i_j(self, tau:int, t:int, i:int, j:int)->float:
+        if  i == j:
+            # Multiply W_IJ by c_keep, kept allocations
+            # I think use allocations from previous round... Maybe? Last round allocations feed into this round's influence
+            this_w = self.W_j(tau,t,i)
+            keep_allocations = self.x_i_j_positive(tau,t,i,i)
+            total = 0
+            for player in range(self.numplayer):
+                total += self.c_steal_k(tau,t,player) * self.x_i_j_negative(tau,t,player,i)
+            return this_w * (self.params["cKeep"] * keep_allocations + total)
+
+        else:
+            # May want to set the allocations to tau-1 and t-1?
+            this_w = self.W_j(tau,t,j)
+            give_allocations = self.x_i_j_positive(tau,t,i,j)
+            steal_allcations = self.x_i_j_negative(tau,t,i,j)
+            return this_w * (self.params["cGive"] * give_allocations - self.c_steal_k(tau,t,i) * steal_allcations)
+    
+
+    def print_influence(self, tau:int, t:int, i:int,j:int)->float:
+        print(self.influence_i_j(tau,t,i,j))
+
+    def make_game():
+        pass
