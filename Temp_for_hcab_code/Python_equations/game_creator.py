@@ -1,9 +1,9 @@
-
+import pandas
 
 class game_obj:
 
 
-    def __init__(self, game: dict):
+    def __init__(self, game: dict, type :str = "json"): #csv
         """
         This needs to take in a dictionary, and then search for the master influences, parameters, transactions, popularities, and names
         and players
@@ -11,7 +11,7 @@ class game_obj:
         only look for names, popularities, params and influence
         """
         
-
+        self.type = type
         self.influences : dict = self.get_influences(game)
         self.params : dict = self.get_params(game)
         self.popularities : dict = self.get_popularities(game)
@@ -52,7 +52,7 @@ class game_obj:
         return self.find_in_dict(game, "influence")
 
     def get_popularities(self,game:dict)->dict:
-        return self.find_in_dict(game, "popular") # Because it could be popularities or popularity
+        return self.find_in_dict(game, "popularities") # Because it could be popularities or popularity
 
     def find_in_dict(self, dictionary : dict, name : str)-> None|dict|list:
         """
@@ -85,9 +85,28 @@ def main() -> None:
     with open("C:/Users/Mango/Desktop/GitHub/Hcab-Dominance//jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json") as f:
         game_1 = json.load(f)
         new_game_obj : game_obj = game_obj(game_1)
-        print(new_game_obj.game_obj()["names"])
+        
+        # Names
+        assert (new_game_obj.game_obj()["names"]) == ['Delta', 'Foxtrot', 'November', 'Yankee']
+
+        # Popularities
+        assert (new_game_obj.game_obj()["popularities"]["round_2"]["Delta"]) == 89.75
+
+    with open("C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/Temp_for_hcab_code/Sample_games/JHG_DataSets/IJCAI_human_bot_study/jsons/jhg_CXJR.json") as f:
+        game_1 = json.load(f)
+        new_game_obj : game_obj = game_obj(game_1)
+        
+        # Names
+        assert (new_game_obj.game_obj()["names"]) == ["Alpha","Bravo","Charlie","Delta","Echo","Foxtrot","Golf","Hotel"]
+
+        # Popularities
+        assert (new_game_obj.game_obj()["popularities"]["round_10"]["Bravo"]) == 92.74751346569624
 
 
+        # Influences
+        assert (new_game_obj.game_obj()["influences"]['round_9']['Foxtrot']['Hotel']) ==  21.34620962712605
+
+        assert (new_game_obj.game_obj()["influences"]['round_9']['Alpha']['Alpha']) ==  42.366241654091475
 
 
 
