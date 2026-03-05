@@ -15,7 +15,7 @@ class game_obj:
         self.influences : dict = self.get_influences(game)
         self.params : dict = self.get_params(game)
         self.popularities : dict = self.get_popularities(game)
-        self.names : dict = self.get_player_names(game)
+        self.names : list = self.get_player_names(game)
         
         self.game :dict = {
             "influences":self.influences,
@@ -41,7 +41,9 @@ class game_obj:
         then returns 0:name1
         ...
         """
-        return self.find_in_dict(game, "names").sort()
+        names = self.find_in_dict(game, "gamenames")
+        names.sort() 
+        return names
 
     def get_params(self, game:dict) -> dict:
         return self.find_in_dict(game, "param")
@@ -64,7 +66,7 @@ class game_obj:
                 return item
         
         for key, item in dictionary.items():
-            if isinstance(item, dictionary):
+            if isinstance(item, dict):
                 possibility = self.find_in_dict(item, name)
                 if possibility:
                     return possibility
@@ -76,7 +78,15 @@ def main() -> None:
     """
     Unit tests
     """
+
+    import json
     
+    # Context 1
+    with open("C:/Users/Mango/Desktop/GitHub/Hcab-Dominance//jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json") as f:
+        game_1 = json.load(f)
+        new_game_obj : game_obj = game_obj(game_1)
+        print(new_game_obj.game_obj()["names"])
+
 
 
 
