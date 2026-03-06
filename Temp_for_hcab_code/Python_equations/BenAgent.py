@@ -37,7 +37,15 @@ class GeneAgent3(AbstractAgent):
         """
         # At each playstep, I need to update my beliefs.
         
+        # First make a new round
+        this_round : str = "round_" + str(round_num)
         self.add_round_to_game(round_num)
+
+        # Add the influences
+        # Add the popularties
+
+        # Make the transactions
+
 
     def add_round_to_game(self,round_num : int)->None:
         self.game["round_" + str(round_num)] = {
