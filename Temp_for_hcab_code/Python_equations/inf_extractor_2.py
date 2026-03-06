@@ -10,7 +10,7 @@ class GameParser:
     def __init__(self, game_obj : dict) -> None:
         
         # The following variables will hold the allocations as estimated
-        self.alloactions : dict = {} # dictionary holding round_1... delta: delta:0...etc
+        self.allocations : dict = {} # dictionary holding round_1... delta: delta:0...etc
 
         # Long_n vals is stored to reduce the ammount of time we hold this
         self.long_n_vals :dict = {}
@@ -19,7 +19,7 @@ class GameParser:
         self.game_obj :dict = game_obj
 
         self.influences :dict= game_obj["influences"]
-        self.transactions :dict= game_obj["transactions"]
+        # self.transactions :dict= game_obj["transactions"]
         self.popularities : dict = game_obj["popularities"]
         # alpha, beta, cGive, cKeep, cSteal
         self.params :dict = game_obj["gameParams"]["popularityFunctionParams"]
@@ -71,7 +71,7 @@ class GameParser:
         name_j :str = self.player_names[j]
         round_name : str = "round_" + str(tau)
 
-        allocation : float = self.alloactions[round_name][name_j][name_i] 
+        allocation : float = self.allocations[round_name][name_j][name_i] 
         if  allocation > 0:
             return allocation
         else:
@@ -86,7 +86,7 @@ class GameParser:
         name_j :str = self.player_names[j]
         round_name : str = "round_" + str(tau)
 
-        allocation : float = self.alloactions[round_name][name_j][name_i] 
+        allocation : float = self.allocations[round_name][name_j][name_i] 
         if allocation < 0:
             return allocation
         else:
@@ -163,5 +163,10 @@ class GameParser:
     def print_influence(self, tau:int, t:int, i:int,j:int)->float:
         print(self.influence_i_j(tau,t,i,j))
 
-    def make_game():
+    def make_game(self, tau :int):
+        """
+        This will use the 
+        
+        """
+        
         pass

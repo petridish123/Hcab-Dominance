@@ -59,7 +59,7 @@ class game_obj:
         return self.find_in_dict(game, "param")
 
     def get_influences(self, game:dict)->dict:
-        return self.find_in_dict(game, "influence")
+        return self.find_in_dict(game, "influences")
 
     def get_popularities(self,game:dict)->dict:
         return self.find_in_dict(game, "popularities") # Because it could be popularities or popularity
@@ -95,8 +95,7 @@ class game_obj:
         data = {
             "popularities": {},
             "parameters": {},
-            "allocations": {},
-            "influence": {},
+            "influences": {},
             "gamenames" : players,
             
         }
@@ -114,16 +113,16 @@ class game_obj:
                 p: row[p] for p in players
             }
 
-            # --- allocations ---
-            alloc = {}
-            for i, p in enumerate(players):
-                alloc[p] = {}
-                for j, q in enumerate(players):
-                    col = f"{i}-T-{j}"
-                    if col in df.columns:
-                        alloc[p][q] = row[col]
+            # # --- allocations ---
+            # alloc = {}
+            # for i, p in enumerate(players):
+            #     alloc[p] = {}
+            #     for j, q in enumerate(players):
+            #         col = f"{i}-T-{j}"
+            #         if col in df.columns:
+            #             alloc[p][q] = row[col]
 
-            data["allocations"][rkey] = alloc
+            # data["allocations"][rkey] = alloc
 
             # --- influence ---
             infl = {}
@@ -134,7 +133,7 @@ class game_obj:
                     if col in df.columns:
                         infl[p][q] = row[col]
 
-            data["influence"][rkey] = infl
+            data["influences"][rkey] = infl
 
         return data
 
@@ -156,8 +155,6 @@ class game_obj:
 
         return data
 
-
-    
 
 # These are just some tests to make sure that the csv reader and the json reader work
 def main() -> None:
@@ -211,8 +208,6 @@ def main() -> None:
     assert (new_game_obj.game_obj()["influences"]['round_9']['p5']['p7']) ==  21.34620962712605
 
     assert (new_game_obj.game_obj()["influences"]['round_9']['p0']['p0']) ==  42.36624165409148
-
-
 
 
 if __name__ == "__main__":
