@@ -9,8 +9,7 @@ class GameParser:
 
     def __init__(self, game_obj : dict) -> None:
         
-        # The following variables will hold the allocations as estimated
-        self.allocations : dict = {} # dictionary holding round_1... delta: delta:0...etc
+
 
         # Long_n vals is stored to reduce the ammount of time we hold this
         self.long_n_vals :dict = {}
@@ -28,6 +27,10 @@ class GameParser:
         self.player_names : dict
         self.numplayer : int
         self.make_player_names()
+
+        # The following variables will hold the allocations as estimated
+        # This holds round 0 so that I can reference it if needed
+        self.allocations : dict = {"round_0":{player_name:{other_name:0 for other_name in self.player_names} for player_name in self.player_names}} # dictionary holding round_1... delta: delta:0...etc
 
     def make_player_names(self) -> None:
         player_list :list = []
@@ -164,7 +167,36 @@ class GameParser:
         print(self.influence_i_j(tau,t,i,j))
 
 
-    def make_game():
+    def make_round(self,influence:dict, tau:int, t:int)->None:
+        """
+        This is going to take in a single round's influence matrix, and then using the allocation matrix we hold,
+        compute this round's allocations
+        
+
+
+        """
+        round_name : str = "round_" + str(tau)
+
+        for j in range(self.numplayer):
+            """
+            the way this is currently listed, it will actually calculate the columns
+
+            """
+            player_j_name : str = self.player_names[j]
+            for i in range(self.numplayer):
+                player_i_name :str = self.player_names[i]
+                if i == j:
+                    """
+                    self.estimate_keeping(tau,t,i)
+                    """
+                    keep_amount = self.estimate_keeping(tau,t,i)
+                else:
+                    """
+                    Estimate giving from j to i 
+                    """
+
+
+    def make_game(self, n:int)->None:
         """
         Here is the plan:
         calculate the current round from round 1 to n, allocations wise. This will be through estimating stealing, keep and give.
@@ -174,6 +206,66 @@ class GameParser:
         
         
         """
+
+    def estimate_keeping(self,tau :int, t:int, i:int) -> float:
+        """
+        Docstring for estimate_keeping
+        
+        :param tau: Description
+        :type tau: int
+        :param t: Description
+        :type t: int
+        :param i: Description
+        :type i: int
+        :return: Description
+        :rtype: float
+        
+
+        fr each player that isn't myself do this{
+            Get the change in influence
+            if the change in influence is negative from other player to me
+        }
+
+        Note for me about the neg influence
+        in the jhg code, they take the influence, and negate it. If the index
+        is positive, that means that it was negative and thus was a steal.
+        For me since I get delta influence, I need to instead do the opposite
+        of what they do. That is correct.
+
+        """
+
+        me_amount : float = 0.0
+        total_amount : float = 0.0
+
+        for j in range(Pop_eq.NUMPLAYERS):
+            # don't check against this player
+            if j == i: continue
+
+            # Get the change in influence
+            change_in_i :float = self.delta_I(tau,t,i,j) # I need to make sure this is correct. It is from i to j RAHHH
+
+            # If there is a negative interaction try to estimate 
+            if  change_in_i < 0:
+                # These are reversed because I take the change in influence rather than negative influence. 
+                total_amount -= change_in_i / self.params["cSteal"] # Change in influence divided by the coef_steal. This will get the estimated amount of stealing
+                me_amount += change_in_i # Still not sure what me_amount does 
+            else: # if the change in i is 0 or positive
+                # Estimate how much we are given
+                total_amount += change_in_i / self.params["cGive"] # Why not W_j?
+
+        # This updates the amount that was kept
+        me_amount = (me_amount + self.delta_I(tau,t,i,i)) / self.params["cKeep"]
+        total_amount += me_amount
+
+        if total_amount > 0:
+            # This tries to estimate how much i kept percentage
+            # if me_amount < 0: print(f"me_amount : {me_amount}")
+            return me_amount / total_amount
+        else:
+            print("something off?")
+            print(total_amount)
+            return 1.0
+
 
 
 
@@ -244,64 +336,7 @@ def estimate_x_allocate_j_i(tau :int, t:int, i:int,j:int) -> float:
             # print(new_val/Pop_eq.c_steal)
             return  new_val / Pop_eq.c_steal
 
-def estimate_keeping(tau :int, t:int, i:int) -> float:
-    """
-    Docstring for estimate_keeping
-    
-    :param tau: Description
-    :type tau: int
-    :param t: Description
-    :type t: int
-    :param i: Description
-    :type i: int
-    :return: Description
-    :rtype: float
-    
 
-    fr each player that isn't myself do this{
-        Get the change in influence
-        if the change in influence is negative from other player to me
-    }
-
-    Note for me about the neg influence
-    in the jhg code, they take the influence, and negate it. If the index
-    is positive, that means that it was negative and thus was a steal.
-    For me since I get delta influence, I need to instead do the opposite
-    of what they do. That is correct.
-
-    """
-
-    me_amount : float = 0.0
-    total_amount : float = 0.0
-
-    for j in range(Pop_eq.NUMPLAYERS):
-        # don't check against this player
-        if j == i: continue
-
-        # Get the change in influence
-        change_in_i :float = delta_I(tau,t,i,j) # I need to make sure this is correct. It is from i to j RAHHH
-
-        # If there is a negative interaction try to estimate 
-        if  change_in_i < 0:
-            # These are reversed because I take the change in influence rather than negative influence. 
-            total_amount -= change_in_i / Pop_eq.c_steal # Change in influence divided by the coef_steal. This will get the estimated amount of stealing
-            me_amount += change_in_i # Still not sure what me_amount does 
-        else: # if the change in i is 0 or positive
-            # Estimate how much we are given
-            total_amount += change_in_i / Pop_eq.c_give # Why not W_j?
-
-    # This updates the amount that was kept
-    me_amount = (me_amount + delta_I(tau,t,i,i)) / Pop_eq.c_keep
-    total_amount += me_amount
-
-    if total_amount > 0:
-        # This tries to estimate how much i kept percentage
-        # if me_amount < 0: print(f"me_amount : {me_amount}")
-        return me_amount / total_amount
-    else:
-        print("something off?")
-        print(total_amount)
-        return 1.0
 
 
 def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
