@@ -62,9 +62,9 @@ class GameParser:
         if tau < 1: 
             raise ValueError("Should not calculate rounds less than 1")
         # I want to find a way that this will work without Pop_eq. This could be, store the allocations and use those calculations
-        influence_tau = Pop_eq.influence_i_j(tau,t,i,j)
-        influence_tau_minus =  Pop_eq.influence_i_j(tau - 1,t,i,j)
-        return influence_tau - (1-Pop_eq.alpha) * influence_tau_minus
+        influence_tau = self.influence_i_j(tau,t,i,j)
+        influence_tau_minus =  self.influence_i_j(tau - 1,t,i,j)
+        return influence_tau - (1-self.params["alpha"]) * influence_tau_minus
 
     def x_i_j_positive(self, tau : int, t :int , i: int, j:int) -> float:
         """
@@ -189,11 +189,12 @@ class GameParser:
                     """
                     self.estimate_keeping(tau,t,i)
                     """
-                    keep_amount = self.estimate_keeping(tau,t,i)
+                    self.allocations[round_name][player_i_name][player_i_name] = self.estimate_keeping(tau,t,i)
                 else:
                     """
                     Estimate giving from j to i 
                     """
+                    self.allocations[round_name][player_j_name][player_i_name] = 0 # replace with the estimation
 
 
     def make_game(self, n:int)->None:
@@ -266,7 +267,34 @@ class GameParser:
             print(total_amount)
             return 1.0
 
+    def estimate_x_allocate_j_i(self, tau :int, t:int, i:int,j:int) -> float:
+        """
+        Docstring for estimate_x_give_j_i
+        
+        :param tau: Description
+        :type tau: int
+        :param t: Description
+        :type t: int
+        :param i: Description
+        :type i: int
+        :param j: Description
+        :type j: int
+        
+        This is the ammount estimated that i gave to j (x_j_i)
+        """
 
+        # I think this needs to check and make sure that delta_I is positive
+        # if delta_I(tau,t,i,j) < 0:
+        #     return 0.0
+        # This is an estimate of keeping but this may not be needed with Jake's code now
+        if i == j:
+            return self.delta_I(tau,t,i,j)/ (self.params["alpha"] * self.W_j(tau,t,j)* self.params["cKeep"])
+        else:
+            new_val = self.delta_I(tau,t,i,j)/ (self.params["alpha"] * self.W_j(tau,t,j))
+            if new_val >= 0:
+                return new_val / (self.params["cGive"])
+            else:
+                return  new_val / self.params["cSteal"] # This needs to be c_steal_k
 
 
 """
@@ -299,43 +327,6 @@ def estimate_x_give_j_i(tau :int, t:int, i:int,j:int) -> float:
         return delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j)* Pop_eq.c_keep)
 
     return delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j)* Pop_eq.c_give)
-
-
-def estimate_x_allocate_j_i(tau :int, t:int, i:int,j:int) -> float:
-    """
-    Docstring for estimate_x_give_j_i
-    
-    :param tau: Description
-    :type tau: int
-    :param t: Description
-    :type t: int
-    :param i: Description
-    :type i: int
-    :param j: Description
-    :type j: int
-    
-    This is the ammount estimated that i gave to j (x_j_i)
-    """
-
-    # I think this needs to check and make sure that delta_I is positive
-    # if delta_I(tau,t,i,j) < 0:
-    #     return 0.0
-    # This is an estimate of keeping but this may not be needed with Jake's code now
-    if i == j:
-        return delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j)* Pop_eq.c_keep)
-    else:
-        new_val = delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j))
-        # print("GYAH")
-        # print(new_val)
-        # print()
-        if new_val >= 0:
-            return new_val / (Pop_eq.c_give)
-        else:
-            # print("PLREAS")
-            # print(f"i : {i}, j:{j}")
-            # print(new_val/Pop_eq.c_steal)
-            return  new_val / Pop_eq.c_steal
-
 
 
 
