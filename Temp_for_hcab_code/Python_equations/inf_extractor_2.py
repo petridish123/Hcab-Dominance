@@ -147,7 +147,8 @@ class GameParser:
         # 
         if tau == 0:
             return 0   
-
+        if tau == t:
+            return self.influences[this_round][name_i][name_j] + self.params["alpha"] * self.V_i_j(tau,t,i,j)
         return self.params["alpha"] * self.V_i_j(tau,t,i,j) + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j)     
 
     def V_i_j(self, tau:int, t:int, i:int, j:int)->float:
