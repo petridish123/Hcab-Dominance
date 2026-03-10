@@ -37,6 +37,7 @@ class GameParser:
         # The following variables will hold the allocations as estimated
         # This holds round 0 so that I can reference it if needed
         self.allocations : dict = {"round_0":{player_name:{other_name:0 for other_name in self.player_names} for player_name in self.player_names}} # dictionary holding round_1... delta: delta:0...etc
+        self.num_tokens = self.numplayer * 2
 
     def make_player_names(self) -> None:
         player_list :list = []
@@ -149,7 +150,6 @@ class GameParser:
 
         return self.params["alpha"] * self.V_i_j(tau,t,i,j) + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j)     
 
-
     def V_i_j(self, tau:int, t:int, i:int, j:int)->float:
         if  i == j:
             # Multiply W_IJ by c_keep, kept allocations
@@ -198,7 +198,7 @@ class GameParser:
                     """
                     self.estimate_keeping(tau,t,i)
                     """
-                    self.allocations[round_name][player_i_name][player_i_name] = self.estimate_keeping(tau,t,i)
+                    self.allocations[round_name][player_i_name][player_i_name] = self.estimate_keeping(tau,t,i) * self.num_tokens
                 else:
                     """
                     Estimate giving from j to i 
@@ -460,19 +460,25 @@ def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
         
         return allocation_matrix
 
-
-
+laptop_path :str = "C:/Users/peter/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
+pc_path : str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 def main():
+    n = 3
     import game_creator
-    game_creator_obj = game_creator.game_obj.load_to_dict("C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json")
+    game_creator_obj = game_creator.game_obj.load_to_dict(laptop_path)
     game_obj = game_creator.game_obj(game_creator_obj).game_obj()
 
     inf_extractor = GameParser(game_obj)
-    # print(game_obj["influences"])
-    inf_extractor.make_round(game_obj["influences"]["round_1"],1,1)
-    inf_extractor.make_round(game_obj["influences"]["round_2"],2,2)
-    # print(inf_extractor.allocations["round_2"])
-    print(game_obj["influences"]["round_2"])
+    
+
+    for i in range(1,n+1):
+        round_name = "round_" + str(n)
+        inf_extractor.make_round(game_obj["influences"][round_name],i,i)
+
+    # print(game_obj["influences"]["round_2"])
+    print(inf_extractor.allocations)
+
+
 
 if __name__ == '__main__':
     main()
