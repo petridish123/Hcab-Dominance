@@ -29,10 +29,11 @@ class game_obj:
 
         self.game :dict = {
             "influences":self.influences,
-            "parameters":self.params,
+            "gameParams":self.params,
             "popularities":self.popularities,
             "names":self.names,
-            "numplayers": len(self.names)
+            "numplayers": len(self.names),
+            "players" :self.names
         }
 
         
@@ -56,10 +57,26 @@ class game_obj:
         return names
 
     def get_params(self, game:dict) -> dict:
-        return self.find_in_dict(game, "param")
+        return self.find_in_dict(game, "popularityFunctionParams")
 
     def get_influences(self, game:dict)->dict:
-        return self.find_in_dict(game, "influences")
+        name = "influence"
+        for key, item in game.items():
+            if not isinstance(item, dict): continue
+            if name.lower() in str(key).lower():
+                for item_name in item: # makes sure this has rounds
+                    if "round" in item_name:
+                        return item
+        
+        for key, item in game.items():
+            if isinstance(item, dict):
+                possibility = self.find_in_dict(item, name)
+                if possibility:
+                    for item in possibility: # makes sure this has rounds
+                        if "round" in item:
+                           return possibility
+        
+        return None
 
     def get_popularities(self,game:dict)->dict:
         return self.find_in_dict(game, "popularities") # Because it could be popularities or popularity

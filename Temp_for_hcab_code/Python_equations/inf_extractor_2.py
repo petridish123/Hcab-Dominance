@@ -21,13 +21,19 @@ class GameParser:
         # self.transactions :dict= game_obj["transactions"]
         self.popularities : dict = game_obj["popularities"]
         # alpha, beta, cGive, cKeep, cSteal
-        self.params :dict = game_obj["gameParams"]["popularityFunctionParams"]
+        self.params :dict = game_obj["gameParams"]#["popularityFunctionParams"]
 
         # Creates a dictionary int : string of player names.
+        
         self.player_names : dict
         self.numplayer : int
-        self.make_player_names()
-
+        
+        if not "names" in self.game_obj: 
+            self.make_player_names()
+        else:
+            self.player_names = game_obj["names"]
+            self.numplayer = game_obj["numplayers"]
+        
         # The following variables will hold the allocations as estimated
         # This holds round 0 so that I can reference it if needed
         self.allocations : dict = {"round_0":{player_name:{other_name:0 for other_name in self.player_names} for player_name in self.player_names}} # dictionary holding round_1... delta: delta:0...etc
@@ -72,7 +78,7 @@ class GameParser:
         """
         name_i :str = self.player_names[i]
         name_j :str = self.player_names[j]
-        round_name : str = "round_" + str(tau)
+        round_name : str = "round_" + str(tau-1)
 
         allocation : float = self.allocations[round_name][name_j][name_i] 
         if  allocation > 0:
@@ -87,7 +93,7 @@ class GameParser:
         """
         name_i :str = self.player_names[i]
         name_j :str = self.player_names[j]
-        round_name : str = "round_" + str(tau)
+        round_name : str = "round_" + str(tau-1)
 
         allocation : float = self.allocations[round_name][name_j][name_i] 
         if allocation < 0:
@@ -175,7 +181,10 @@ class GameParser:
 
 
         """
+        
         round_name : str = "round_" + str(tau)
+
+        self.allocations[round_name] = {player_name:{other_name:0 for other_name in self.player_names} for player_name in self.player_names}
 
         for j in range(self.numplayer):
             """
@@ -194,7 +203,7 @@ class GameParser:
                     """
                     Estimate giving from j to i 
                     """
-                    self.allocations[round_name][player_j_name][player_i_name] = 0 # replace with the estimation
+                    self.allocations[round_name][player_j_name][player_i_name] = self.estimate_x_allocate_j_i(tau,t,i,j) # replace with the estimation
 
 
     def make_game(self, n:int)->None:
@@ -263,8 +272,8 @@ class GameParser:
             # if me_amount < 0: print(f"me_amount : {me_amount}")
             return me_amount / total_amount
         else:
-            print("something off?")
-            print(total_amount)
+            # print("something off?")
+            # print(total_amount)
             return 1.0
 
     def estimate_x_allocate_j_i(self, tau :int, t:int, i:int,j:int) -> float:
@@ -450,3 +459,20 @@ def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
         normalize_allocations(allocation_matrix,tau,t)
         
         return allocation_matrix
+
+
+
+def main():
+    import game_creator
+    game_creator_obj = game_creator.game_obj.load_to_dict("C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json")
+    game_obj = game_creator.game_obj(game_creator_obj).game_obj()
+
+    inf_extractor = GameParser(game_obj)
+    # print(game_obj["influences"])
+    inf_extractor.make_round(game_obj["influences"]["round_1"],1,1)
+    inf_extractor.make_round(game_obj["influences"]["round_2"],2,2)
+    # print(inf_extractor.allocations["round_2"])
+    print(game_obj["influences"]["round_2"])
+
+if __name__ == '__main__':
+    main()
