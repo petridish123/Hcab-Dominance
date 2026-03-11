@@ -79,7 +79,7 @@ class GameParser:
         """
         name_i :str = self.player_names[i]
         name_j :str = self.player_names[j]
-        round_name : str = "round_" + str(tau-1)
+        round_name : str = "round_" + str(tau)
 
         allocation : float = self.allocations[round_name][name_j][name_i] 
         if  allocation > 0:
@@ -94,7 +94,7 @@ class GameParser:
         """
         name_i :str = self.player_names[i]
         name_j :str = self.player_names[j]
-        round_name : str = "round_" + str(tau-1)
+        round_name : str = "round_" + str(tau)
 
         allocation : float = self.allocations[round_name][name_j][name_i] 
         if allocation < 0:
@@ -145,6 +145,10 @@ class GameParser:
         # Need to recieve the influence from this past round
         # Use self.allocations. this will be where I place all my allocations that I estimate
         # 
+        """
+        THIS IS WHERE THE GUY IS
+        
+        """
         if tau == 0:
             return 0   
         if tau == t:
@@ -307,166 +311,20 @@ class GameParser:
                 return  new_val / self.params["cSteal"] # This needs to be c_steal_k
 
 
-"""
-New plan is to use all of these functions, but assume that the previous round's things that I computed were completely correct
-Basically, I need to solve for delta_I
-"""
 
 
-def estimate_x_give_j_i(tau :int, t:int, i:int,j:int) -> float:
-    """
-    Docstring for estimate_x_give_j_i
-    
-    :param tau: Description
-    :type tau: int
-    :param t: Description
-    :type t: int
-    :param i: Description
-    :type i: int
-    :param j: Description
-    :type j: int
-    
-    This is the ammount estimated that i gave to j (x_j_i)
-    """
-
-    # I think this needs to check and make sure that delta_I is positive
-    if delta_I(tau,t,i,j) < 0:
-        return 0.0
-    # This is an estimate of keeping but this may not be needed with Jake's code now
-    if i == j:
-        return delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j)* Pop_eq.c_keep)
-
-    return delta_I(tau,t,i,j)/ (Pop_eq.alpha * new_W_j(tau,t,j)* Pop_eq.c_give)
-
-
-
-def estimate_allocation_i(tau :int, t: int, i: int) -> list[int]:
-    """
-    Docstring for estimate_allocation_i
-    
-    :param tau: Description
-    :type tau: int
-    :param t: Description
-    :type t: int
-    :param i: Description
-    :type i: int
-    
-    This function finds the allocation list of a single player
-    It does this by looping through all delta influence from player i to player j
-    And estimating the allocation to that player.
-    Then it normalizes the allocation (make sure it meets exactly the number of tokens)
-
-    """
-    # this will go over all and check giving, then check keeping for self and then check stealing.
-    
-    allocation_list :list[int] = [0 for i in range(Pop_eq.NUMPLAYERS)]
-    
-    total_tokens :int = Pop_eq.NUMTOKENS
-    total_used :int = 0
-    # I need to remember to round the floats to the nearest int.
-    for j in range(Pop_eq.NUMPLAYERS):
-        # print(f"i : {i}, j : {j}")
-        # print(delta_I(tau,t,j,i))
-        if i == j:
-            tokens = clamp(estimate_keeping(tau,t,i) * Pop_eq.NUMTOKENS, 0, Pop_eq.NUMTOKENS)
-            # print(f"Is this right? : {tokens}")
-            allocation_list[j] = tokens
-            total_used += tokens
-        else:
-            # tokens = clamp(estimate_x_give_j_i(tau,t,j,i) * Pop_eq.NUMTOKENS,0,Pop_eq.NUMTOKENS)
-            tokens = clamp(estimate_x_allocate_j_i(tau,t,j,i) * Pop_eq.NUMTOKENS,-Pop_eq.NUMTOKENS,Pop_eq.NUMTOKENS)
-            # print(f'tokens : {tokens}')
-            allocation_list[j] = tokens
-            total_used += tokens
-    #do steal here
-    # remember that if the person likely stole, the amount they kept is probably lower than it says
-    total_steal :int = total_tokens - total_used
-    # print(f"This is the amount player {i} stole {total_steal}")
-    # who to allocate this john to.
-    return allocation_list, total_steal
-
-def normalize_allocations(allocations : dict, tau:int, t:int) -> dict:
-    """
-    Take each allocation list, round each allocation. Sum them and if > 8 then try clipping from keep.
-    If there is less than 8, send the rest to keep.
-    
-    sum up the abs(all other player allocations) round each one.
-    If that sum is greater, deal with it
-    set the difference from the total and that sum equal to the keeping.
-    clamp( 0, maxtokens)
-
-    """
-
-    # Allocations is the dict of all
-    # Stole... do I need?
-
-    for i, allocation in allocations.items():
-        temp_total = 0
-        for j in range(len(allocation)):
-
-            if j == i :continue
-            allocation[j] = round( allocation[j] )
-            temp_total += round( abs( allocation[j] ) ) # Round the number then add it to the total
-        allocation[i] = clamp(Pop_eq.NUMTOKENS-temp_total,0,Pop_eq.NUMTOKENS)
-    return allocations
-
-def get_stolen_x_i_j(tau: int, t:int,i:int, j:int, allocations : dict) -> float:
-    # This will get the all that but instead - new_w_j * popeq.c_give * the give allocation all divided by c_steal
-    stolen_list :list = [0 for i in range(Pop_eq.NUMPLAYERS)]
-    for k in range(Pop_eq.NUMPLAYERS):
-        if k == j: continue
-        stolen_list[k] = ((delta_I(tau,t,i,j)/ (Pop_eq.alpha)) - new_W_j(tau,t,j)* max(Pop_eq.c_give * allocations[j][i], 1) ) / estimated_c_steal_k(tau,t,k,allocations) # Allocations from j to i?
-    return stolen_list
-
-
-def estimated_c_steal_k(tau:int, t:int,k : int, allocations : dict) -> float:
-     # This is going to take the allocations and use that for the c_steal calculation
-    total :float = 0
-    real_total : float = 0
-    for j in range(len(allocations[k])):
-        allocation = allocations[k][j]
-        if allocation < 0:
-            total += allocation
-            real_total += allocation * new_W_j(tau,t,j)
-    
-    if total < 0:
-        return Pop_eq.c_steal * max(0, 1- ( allocations[k][k] * new_W_j(tau,t,k) / (real_total) ) )
-    else:
-        return Pop_eq.c_steal
-    
-
-
-def compute_allocation_matrix(tau:int,t:int) -> dict[int:list[int]]:
-        """
-        Docstring for compute_allocation_matrix
-        
-        :param tau: Description
-        :type tau: int
-        :param t: Description
-        :type t: int
-        
-        This function creates and returns an allocation matrix for each player
-        """
-
-        allocation_matrix :dict = {}
-        stole_mat : dict = {}
-        # for each player, estimate the allocations
-        
-        for i in range(Pop_eq.NUMPLAYERS):
-            allocations, stole_ammt = estimate_allocation_i(tau,t,i) 
-            allocation_matrix[i] = allocations
-            stole_mat[i] = stole_ammt
-
-        normalize_allocations(allocation_matrix,tau,t)
-        
-        return allocation_matrix
+def pretty_print_dict(this_dict : dict) -> str:
+    output = ""
+    for key, value in this_dict.items():
+        output += str(key) + " : " + str(value) + "\n"
+    return output
 
 laptop_path :str = "C:/Users/peter/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 pc_path : str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 def main():
     n = 3
     import game_creator
-    game_creator_obj = game_creator.game_obj.load_to_dict(laptop_path)
+    game_creator_obj = game_creator.game_obj.load_to_dict(pc_path)
     game_obj = game_creator.game_obj(game_creator_obj).game_obj()
 
     inf_extractor = GameParser(game_obj)
@@ -477,7 +335,7 @@ def main():
         inf_extractor.make_round(game_obj["influences"][round_name],i,i)
 
     # print(game_obj["influences"]["round_2"])
-    print(inf_extractor.allocations)
+    print(pretty_print_dict(inf_extractor.allocations))
 
 
 
