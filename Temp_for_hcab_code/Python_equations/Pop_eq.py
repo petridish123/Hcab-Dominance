@@ -546,7 +546,10 @@ def main():
             t = int(answers[1])
             player_1 = int(answers[2])
             player_2 = int(answers[3])
-            print(f"...:" ,influence_i_j(tau, t,player_1, player_2))
+            print(f"w : {W_j(tau,t,player_1)}")
+            # print(f"...:" ,influence_i_j(tau, t,player_1, player_2))
+            print(f"...:{V_i_j(tau,t,player_1,player_2)} ")
+            
         except:
             print("Incorrect type, please use whole numbers, or in range values")
         

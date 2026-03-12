@@ -1,6 +1,7 @@
 import Pop_eq
 
-
+def clamp(n : float, smallest:int = 0, largest:int = 10) ->float:
+    return max(smallest, min(n,largest))
 class GameParser:
     """
     Game parser will hold a game object and allow the user to make queries about the game.
@@ -17,7 +18,7 @@ class GameParser:
         # The following variables are created from the game_obj
         self.game_obj :dict = game_obj
 
-        self.influences :dict= game_obj["influences"]
+        self.influences :dict = game_obj["influences"]
         # self.transactions :dict= game_obj["transactions"]
         self.popularities : dict = game_obj["popularities"]
         # alpha, beta, cGive, cKeep, cSteal
@@ -71,6 +72,9 @@ class GameParser:
         # I want to find a way that this will work without Pop_eq. This could be, store the allocations and use those calculations
         influence_tau = self.influence_i_j(tau,t,i,j)
         influence_tau_minus =  self.influence_i_j(tau - 1,t,i,j)
+        # if influence_tau - (1-self.params["alpha"]) * influence_tau_minus > 42:
+        #     print("???")
+        #     print((1-self.params["alpha"]) * influence_tau_minus)
         return influence_tau - (1-self.params["alpha"]) * influence_tau_minus
 
     def x_i_j_positive(self, tau : int, t :int , i: int, j:int) -> float:
@@ -134,8 +138,9 @@ class GameParser:
         return self.params["beta"] * self.popularities[this_round][self.player_names[j]] + (1-self.params["beta"]) * self.long_n(tau,t) * self.popularities[that_round][self.player_names[j]] 
 
     def influence_i_j(self, tau:int, t:int, i:int, j:int):
+        # return Pop_eq.influence_i_j(tau,t,i,j)
         """
-        
+        Loook at this, the influence is HRTARRARARHHAHRHA
         """
         this_round : str = "round_" + str(tau)
         that_round : str = "round_" + str(t)
@@ -145,17 +150,19 @@ class GameParser:
         # Need to recieve the influence from this past round
         # Use self.allocations. this will be where I place all my allocations that I estimate
         # 
-        """
-        THIS IS WHERE THE GUY IS
-        
-        """
-        if tau == 0:
+        if tau <= 0:
             return 0   
+        # print(f" Tau: {tau}, t: {t}, i {i}, j {j}, {self.influences[this_round][name_i][name_j]}, {Pop_eq.influence_i_j(tau,t,i,j)} ")
         if tau == t:
-            return self.influences[this_round][name_i][name_j] + self.params["alpha"] * self.V_i_j(tau,t,i,j)
+            
+            return self.influences[this_round][name_i][name_j]
+        return self.influences[this_round][name_i][name_j]
+        # print(self.influences[this_round][name_i][name_j])
+        print(f"player i : {i}, player j : {j}", self.V_i_j(tau,t,i,j))# + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j), self.influence_i_j(tau-1,t,i,j))
         return self.params["alpha"] * self.V_i_j(tau,t,i,j) + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j)     
 
     def V_i_j(self, tau:int, t:int, i:int, j:int)->float:
+        # return Pop_eq.V_i_j(tau,t,i,j)
         if  i == j:
             # Multiply W_IJ by c_keep, kept allocations
             # I think use allocations from previous round... Maybe? Last round allocations feed into this round's influence
@@ -188,8 +195,9 @@ class GameParser:
         """
         
         round_name : str = "round_" + str(tau)
-
-        self.allocations[round_name] = {player_name:{other_name:0 for other_name in self.player_names} for player_name in self.player_names}
+        new_round = "round_" + str(tau-1)
+        self.influences[round_name] = influence
+        self.allocations[new_round] = {player_name:{other_name:0 for other_name in self.player_names} for player_name in self.player_names}
 
         for j in range(self.numplayer):
             """
@@ -198,17 +206,20 @@ class GameParser:
             """
             player_j_name : str = self.player_names[j]
             for i in range(self.numplayer):
+                # print(f"Player i: {i}, player j: {j}",self.delta_I(tau,t,i,j))
                 player_i_name :str = self.player_names[i]
+                
                 if i == j:
                     """
                     self.estimate_keeping(tau,t,i)
                     """
-                    self.allocations[round_name][player_i_name][player_i_name] = self.estimate_keeping(tau,t,i) * self.num_tokens
+                    
+                    self.allocations[new_round][player_i_name][player_i_name] = clamp( round( self.estimate_keeping(tau,t,i) * self.num_tokens ), 0 ,self.num_tokens)
                 else:
                     """
                     Estimate giving from j to i 
                     """
-                    self.allocations[round_name][player_j_name][player_i_name] = self.estimate_x_allocate_j_i(tau,t,i,j) # replace with the estimation
+                    self.allocations[new_round][player_j_name][player_i_name] = clamp( round( self.estimate_x_allocate_j_i(tau,t,i,j) * self.num_tokens ) ,0, self.num_tokens)# replace with the estimation
 
 
     def make_game(self, n:int)->None:
@@ -251,13 +262,14 @@ class GameParser:
 
         me_amount : float = 0.0
         total_amount : float = 0.0
-
-        for j in range(Pop_eq.NUMPLAYERS):
+        # if tau == 1: # kill the first round, should be able to remove soon though
+        #      return 0
+        for j in range(self.numplayer):
             # don't check against this player
             if j == i: continue
 
             # Get the change in influence
-            change_in_i :float = self.delta_I(tau,t,i,j) # I need to make sure this is correct. It is from i to j RAHHH
+            change_in_i :float = self.delta_I(tau,t,i,j) 
 
             # If there is a negative interaction try to estimate 
             if  change_in_i < 0:
@@ -276,6 +288,8 @@ class GameParser:
             # This tries to estimate how much i kept percentage
             # if me_amount < 0: print(f"me_amount : {me_amount}")
             return me_amount / total_amount
+        if total_amount == 0:
+            return 0
         else:
             # print("something off?")
             # print(total_amount)
@@ -329,9 +343,10 @@ def main():
 
     inf_extractor = GameParser(game_obj)
     
+    # print(inf_extractor.delta_I(3,3,2,0))
 
     for i in range(1,n+1):
-        round_name = "round_" + str(n)
+        round_name = "round_" + str(i)
         inf_extractor.make_round(game_obj["influences"][round_name],i,i)
 
     # print(game_obj["influences"]["round_2"])
