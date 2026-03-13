@@ -26,7 +26,7 @@ class GeneAgent3(AbstractAgent):
         self.game : dict = {}
         self.game_maker : inf_extractor_2.GameParser = inf_extractor_2.GameParser(None)
     
-    def play_round(self, player_idx :int, round_num : int, received :list, popularities : list, influence : list[list], extra_data):
+    def play_round(self, player_idx :int, round_num : int, received :list, popularities : list, influence : list[list], extra_data) -> list:
         """
         player_idx : what player index am I?
         round_num : what round number, starts at 0,  I believe
