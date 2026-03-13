@@ -156,7 +156,7 @@ class GameParser:
         if tau == t:
             
             return self.influences[this_round][name_i][name_j]
-        return self.influences[this_round][name_i][name_j]
+        return self.influences[this_round][name_i][name_j] # failsafe
         # print(self.influences[this_round][name_i][name_j])
         print(f"player i : {i}, player j : {j}", self.V_i_j(tau,t,i,j))# + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j), self.influence_i_j(tau-1,t,i,j))
         return self.params["alpha"] * self.V_i_j(tau,t,i,j) + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j)     
@@ -220,18 +220,21 @@ class GameParser:
                     Estimate giving from j to i 
                     """
                     self.allocations[new_round][player_j_name][player_i_name] = clamp( round( self.estimate_x_allocate_j_i(tau,t,i,j) * self.num_tokens ) ,0, self.num_tokens)# replace with the estimation
+        for player in range(self.numplayer):
+            player_i_name : str = self.player_names[player]
+            self.normalize_allocations_player_i(new_round, player_i_name)
+
+    def normalize_allocations_player_i(self, round_name : str, player_i_name: str)-> None:
+        total_allocations :float = 0
+        for player in self.allocations[round_name][player_i_name]:
+            total_allocations += self.allocations[round_name][player_i_name][player]
+        
+        if total_allocations == 0: return
+        for player in self.allocations[round_name][player_i_name]:
+            self.allocations[round_name][player_i_name][player] = clamp( round( self.allocations[round_name][player_i_name][player] / total_allocations * self.num_tokens ) , 0, self.num_tokens) 
+        
 
 
-    def make_game(self, n:int)->None:
-        """
-        Here is the plan:
-        calculate the current round from round 1 to n, allocations wise. This will be through estimating stealing, keep and give.
-        But because we do it starting at round 1, we can assume that we have the allocations of the previous round.
-        
-        So, we will take the allocations from self.allocations round_i to calculate everything. this is in V_i_j.
-        
-        
-        """
 
     def estimate_keeping(self,tau :int, t:int, i:int) -> float:
         """
@@ -291,8 +294,8 @@ class GameParser:
         if total_amount == 0:
             return 0
         else:
-            # print("something off?")
-            # print(total_amount)
+            print("something off?",t,tau,i)
+            print(total_amount)
             return 1.0
 
     def estimate_x_allocate_j_i(self, tau :int, t:int, i:int,j:int) -> float:
@@ -336,7 +339,7 @@ def pretty_print_dict(this_dict : dict) -> str:
 laptop_path :str = "C:/Users/peter/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 pc_path : str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 def main():
-    n = 3
+    n = 5
     import game_creator
     game_creator_obj = game_creator.game_obj.load_to_dict(pc_path)
     game_obj = game_creator.game_obj(game_creator_obj).game_obj()
@@ -350,7 +353,10 @@ def main():
         inf_extractor.make_round(game_obj["influences"][round_name],i,i)
 
     # print(game_obj["influences"]["round_2"])
-    print(pretty_print_dict(inf_extractor.allocations))
+    for i in range(1,n):
+        round_name : str = "round_" + str(i)
+        print(pretty_print_dict(inf_extractor.allocations[round_name]))
+
 
 
 
