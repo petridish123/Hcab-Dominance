@@ -8,7 +8,7 @@ class GameParser:
     """
 
 
-    def __init__(self, game_obj : dict) -> None:
+    def __init__(self, game_obj : dict | None) -> None:
         
 
 
@@ -16,6 +16,7 @@ class GameParser:
         self.long_n_vals :dict = {}
 
         # The following variables are created from the game_obj
+        if not game_obj: return # Need to make one...
         self.game_obj :dict = game_obj
 
         self.influences :dict = game_obj["influences"]

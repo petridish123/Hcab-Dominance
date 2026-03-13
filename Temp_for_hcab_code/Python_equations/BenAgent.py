@@ -8,7 +8,7 @@ import sys
 import math
 import copy
 
-
+import inf_extractor_2
 
 
 class GeneAgent3(AbstractAgent):
@@ -24,7 +24,7 @@ class GeneAgent3(AbstractAgent):
 
         # Self.game is going to be a game that as I recieve information, I will update it continually
         self.game : dict = {}
-
+        self.game_maker : inf_extractor_2.GameParser = inf_extractor_2.GameParser(None)
     
     def play_round(self, player_idx :int, round_num : int, received :list, popularities : list, influence : list[list], extra_data):
         """
@@ -34,6 +34,9 @@ class GeneAgent3(AbstractAgent):
         popularities: a list of all the popularities of other players
         influence : a matrix of all the influences of others
         extra_data : I don't think I need this...
+        
+        
+        A few things, I can make the game object here... and just say that if it exists already don't do it again...
         """
         # At each playstep, I need to update my beliefs.
         
