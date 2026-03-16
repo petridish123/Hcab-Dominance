@@ -23,7 +23,7 @@ class GeneAgent3(AbstractAgent):
         self.gameParams = {}
 
         # Self.game is going to be a game that as I recieve information, I will update it continually
-        self.game : dict = {}
+    
         self.game_maker : inf_extractor_2.GameParser = inf_extractor_2.GameParser(None)
     
     def play_round(self, player_idx :int, round_num : int, received :list, popularities : list, influence : list[list], extra_data) -> list:
@@ -45,6 +45,10 @@ class GeneAgent3(AbstractAgent):
         set the game
         """
         if not self.game_obj:
+            # Extra data might hold the parameters
+            # Turn popularities into a dict
+            # turn influence into a dict
+            # Put it all into round_num
             pass # Create the inf extracter gameparser
 
         # At each playstep, I need to update my beliefs.
