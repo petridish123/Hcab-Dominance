@@ -49,6 +49,7 @@ class GeneAgent3(AbstractAgent):
             # Turn popularities into a dict
             # turn influence into a dict
             # Put it all into round_num
+
             pass # Create the inf extracter gameparser
 
         # At each playstep, I need to update my beliefs.
@@ -62,6 +63,13 @@ class GeneAgent3(AbstractAgent):
 
         # Make the transactions
 
+    def setGameParams(self, gameParams, _forcedRandom):
+        self.gameParams = gameParams # keep, give, steal, alpha, beta,
+        # This is to work with current iteration of the influence extractor
+        self.gameParams["cKeep"] = self.gameParams["keep"] 
+        self.gameParams["cSteal"] = self.gameParams["steal"] 
+        self.gameParams["cGive"] = self.gameParams["give"] 
+        self.forced_random = _forcedRandom
 
     def add_round_to_game(self,round_num : int)->None:
         self.game["round_" + str(round_num)] = {
