@@ -88,7 +88,7 @@ class GameParser:
 
         allocation : float = self.allocations[round_name][name_j][name_i] 
         if  allocation > 0:
-            return allocation
+            return allocation / self.num_tokens
         else:
             return 0
         
@@ -103,7 +103,7 @@ class GameParser:
 
         allocation : float = self.allocations[round_name][name_j][name_i] 
         if allocation < 0:
-            return allocation
+            return allocation / self.num_tokens
         else:
             return 0
     
@@ -157,7 +157,7 @@ class GameParser:
         if tau == t:
             
             return self.influences[this_round][name_i][name_j]
-        # return self.influences[this_round][name_i][name_j] # failsafe
+        return self.influences[this_round][name_i][name_j] # failsafe
         # print(self.influences[this_round][name_i][name_j])
         # print(f"player i : {i}, player j : {j}", self.V_i_j(tau,t,i,j))# + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j), self.influence_i_j(tau-1,t,i,j))
         return self.params["alpha"] * self.V_i_j(tau,t,i,j) + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j)     
@@ -179,6 +179,7 @@ class GameParser:
             this_w = self.W_j(tau,t,j)
             give_allocations = self.x_i_j_positive(tau,t,i,j)
             steal_allcations = self.x_i_j_negative(tau,t,i,j)
+            # print(f"compare allocations: {Pop_eq.x_i_j_pos(tau,i,j)}, {give_allocations}")
             # print(f"Compare pop: {Pop_eq.V_i_j(tau,tau,i,j)}, this: {this_w * (self.params["cGive"] * give_allocations - self.c_steal_k(tau,t,i) * steal_allcations)}")
             return this_w * (self.params["cGive"] * give_allocations - self.c_steal_k(tau,t,i) * steal_allcations)
     
@@ -341,7 +342,7 @@ def pretty_print_dict(this_dict : dict) -> str:
 laptop_path :str = "C:/Users/peter/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 pc_path : str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 def main():
-    n = 5
+    n = 6
     import game_creator
     game_creator_obj = game_creator.game_obj.load_to_dict(pc_path)
     game_obj = game_creator.game_obj(game_creator_obj).game_obj()
