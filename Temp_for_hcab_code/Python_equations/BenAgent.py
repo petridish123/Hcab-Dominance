@@ -37,7 +37,16 @@ class GeneAgent3(AbstractAgent):
         
         
         A few things, I can make the game object here... and just say that if it exists already don't do it again...
+        
+        
+        
+        Create the influence matrix as a dictionary
+        create the popularities as a dictionary
+        set the game
         """
+        if not self.game_obj:
+            pass # Create the inf extracter gameparser
+
         # At each playstep, I need to update my beliefs.
         
         # First make a new round

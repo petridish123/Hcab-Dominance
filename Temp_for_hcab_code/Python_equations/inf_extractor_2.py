@@ -157,9 +157,9 @@ class GameParser:
         if tau == t:
             
             return self.influences[this_round][name_i][name_j]
-        return self.influences[this_round][name_i][name_j] # failsafe
+        # return self.influences[this_round][name_i][name_j] # failsafe
         # print(self.influences[this_round][name_i][name_j])
-        print(f"player i : {i}, player j : {j}", self.V_i_j(tau,t,i,j))# + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j), self.influence_i_j(tau-1,t,i,j))
+        # print(f"player i : {i}, player j : {j}", self.V_i_j(tau,t,i,j))# + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j), self.influence_i_j(tau-1,t,i,j))
         return self.params["alpha"] * self.V_i_j(tau,t,i,j) + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j)     
 
     def V_i_j(self, tau:int, t:int, i:int, j:int)->float:
@@ -179,6 +179,7 @@ class GameParser:
             this_w = self.W_j(tau,t,j)
             give_allocations = self.x_i_j_positive(tau,t,i,j)
             steal_allcations = self.x_i_j_negative(tau,t,i,j)
+            # print(f"Compare pop: {Pop_eq.V_i_j(tau,tau,i,j)}, this: {this_w * (self.params["cGive"] * give_allocations - self.c_steal_k(tau,t,i) * steal_allcations)}")
             return this_w * (self.params["cGive"] * give_allocations - self.c_steal_k(tau,t,i) * steal_allcations)
     
 
