@@ -49,7 +49,17 @@ class GeneAgent3(AbstractAgent):
             # Turn popularities into a dict
             # turn influence into a dict
             # Put it all into round_num
-
+            influences = {}
+            popularities = {}
+            allocations = {}
+            players = {} # make names p0 - pn and their index dict[int:str]
+            self.game_obj = {"influences" : influences, 
+                             "popularities": popularities,
+                             "allocations" : allocations,
+                             "gameParams" : self.gameParams,
+                             "names" : players,
+                             "numplayers" : len(players)
+                            }
             pass # Create the inf extracter gameparser
 
         # At each playstep, I need to update my beliefs.

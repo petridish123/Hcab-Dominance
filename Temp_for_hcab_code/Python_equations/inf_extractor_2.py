@@ -217,26 +217,54 @@ class GameParser:
                     self.estimate_keeping(tau,t,i)
                     """
                     
-                    self.allocations[new_round][player_i_name][player_i_name] = clamp( round( self.estimate_keeping(tau,t,i) * self.num_tokens ), 0 ,self.num_tokens)
+                    self.allocations[new_round][player_i_name][player_i_name] = clamp( round( self.move_1_towards_0(self.estimate_keeping(tau,t,i) * self.num_tokens, ammount= 0 )), -self.num_tokens ,self.num_tokens)
                 else:
                     """
                     Estimate giving from j to i 
                     """
-                    self.allocations[new_round][player_j_name][player_i_name] = clamp( round( self.estimate_x_allocate_j_i(tau,t,i,j) * self.num_tokens ) ,0, self.num_tokens)# replace with the estimation
+                    self.allocations[new_round][player_j_name][player_i_name] = clamp( round( self.move_1_towards_0(self.estimate_x_allocate_j_i(tau,t,i,j) * self.num_tokens, ammount = 0) ) ,-self.num_tokens, self.num_tokens)# replace with the estimation
+        print(pretty_print_dict(self.allocations[new_round]))
+
         for player in range(self.numplayer):
             player_i_name : str = self.player_names[player]
             self.normalize_allocations_player_i(new_round, player_i_name)
 
     def normalize_allocations_player_i(self, round_name : str, player_i_name: str)-> None:
+        "As part of normalization, I think I am going to bring the allocations 1ish towards 0"
         total_allocations :float = 0
         for player in self.allocations[round_name][player_i_name]:
-            total_allocations += self.allocations[round_name][player_i_name][player]
+            # self.allocations[round_name][player_i_name][player] = self.move_1_towards_0(self.allocations[round_name][player_i_name][player])
+            total_allocations += abs(self.allocations[round_name][player_i_name][player])
         
         if total_allocations == 0: return
         for player in self.allocations[round_name][player_i_name]:
-            self.allocations[round_name][player_i_name][player] = clamp( round( self.allocations[round_name][player_i_name][player] / total_allocations * self.num_tokens ) , 0, self.num_tokens) 
+            self.allocations[round_name][player_i_name][player] = clamp( round( (self.allocations[round_name][player_i_name][player] / total_allocations) * self.num_tokens ) , -self.num_tokens, self.num_tokens) 
         
 
+    def move_1_towards_0(self, the_number_to_move :float, ammount :float = 1, clip :bool = True ) ->float:
+        """
+        This will:
+        a) Get the distance between the number and 0
+        b) If the distance is negative, add 1
+        c) if the distance is positive, subtract 1
+        d) round
+            1) if the number is negative and greater than -1, = 0
+            2) if the number is positive and less than 1, = 0
+        """
+        
+        
+
+        dist_to_0 : float = the_number_to_move - 0
+        new_num : float = 0
+        if dist_to_0 < 0:
+            new_num = the_number_to_move + ammount
+        if dist_to_0 > 0:
+            new_num = the_number_to_move - ammount
+        
+        if clip and new_num < 1 and new_num > -1:
+            new_num = 0
+
+        return new_num
 
 
     def estimate_keeping(self,tau :int, t:int, i:int) -> float:
@@ -289,7 +317,7 @@ class GameParser:
         # This updates the amount that was kept
         me_amount = (me_amount + self.delta_I(tau,t,i,i)) / self.params["cKeep"]
         total_amount += me_amount
-
+        if me_amount < 0: return 0
         if total_amount > 0:
             # This tries to estimate how much i kept percentage
             # if me_amount < 0: print(f"me_amount : {me_amount}")
@@ -356,6 +384,7 @@ def main():
         inf_extractor.make_round(game_obj["influences"][round_name],i,i)
 
     # print(game_obj["influences"]["round_2"])
+    print("printing rounds")
     for i in range(1,n):
         round_name : str = "round_" + str(i)
         print(pretty_print_dict(inf_extractor.allocations[round_name]))
