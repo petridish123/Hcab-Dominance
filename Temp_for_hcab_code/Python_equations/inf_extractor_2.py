@@ -216,13 +216,21 @@ class GameParser:
                     """
                     self.estimate_keeping(tau,t,i)
                     """
-                    
-                    self.allocations[new_round][player_i_name][player_i_name] = clamp( round( self.move_1_towards_0(self.estimate_keeping(tau,t,i) * self.num_tokens, ammount= 0 )), -self.num_tokens ,self.num_tokens)
+                    estimated = self.estimate_keeping(tau,t,i) * self.num_tokens
+                    regulated = self.move_1_towards_0(estimated, ammount= 0 )
+                    rounded = round(regulated )
+                    clamped = clamp( regulated , -self.num_tokens ,self.num_tokens)
+                    self.allocations[new_round][player_i_name][player_i_name] = clamped
                 else:
                     """
                     Estimate giving from j to i 
                     """
-                    self.allocations[new_round][player_j_name][player_i_name] = clamp( round( self.move_1_towards_0(self.estimate_x_allocate_j_i(tau,t,i,j) * self.num_tokens, ammount = 0) ) ,-self.num_tokens, self.num_tokens)# replace with the estimation
+                    # I might want to move the clamp and round out...
+                    estimate = self.estimate_x_allocate_j_i(tau,t,i,j) * self.num_tokens
+                    regulated = self.move_1_towards_0(estimate, ammount = 0)
+                    rounded = round( regulated  )
+                    clamped = clamp( regulated ,-self.num_tokens, self.num_tokens)
+                    self.allocations[new_round][player_j_name][player_i_name] = clamped# replace with the estimation
         print(pretty_print_dict(self.allocations[new_round]))
 
         for player in range(self.numplayer):
