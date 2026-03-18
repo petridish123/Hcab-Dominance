@@ -157,7 +157,7 @@ class GameParser:
         if tau == t:
             
             return self.influences[this_round][name_i][name_j]
-        return self.influences[this_round][name_i][name_j] # failsafe
+        # return self.influences[this_round][name_i][name_j] # failsafe
         # print(self.influences[this_round][name_i][name_j])
         # print(f"player i : {i}, player j : {j}", self.V_i_j(tau,t,i,j))# + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j), self.influence_i_j(tau-1,t,i,j))
         return self.params["alpha"] * self.V_i_j(tau,t,i,j) + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j)     
@@ -183,11 +183,6 @@ class GameParser:
             # print(f"Compare pop: {Pop_eq.V_i_j(tau,tau,i,j)}, this: {this_w * (self.params["cGive"] * give_allocations - self.c_steal_k(tau,t,i) * steal_allcations)}")
             return this_w * (self.params["cGive"] * give_allocations - self.c_steal_k(tau,t,i) * steal_allcations)
     
-
-    def print_influence(self, tau:int, t:int, i:int,j:int)->float:
-        print(self.influence_i_j(tau,t,i,j))
-
-
     def make_round(self,influence:dict, tau:int, t:int)->None:
         """
         This is going to take in a single round's influence matrix, and then using the allocation matrix we hold,
@@ -211,15 +206,18 @@ class GameParser:
             for i in range(self.numplayer):
                 # print(f"Player i: {i}, player j: {j}",self.delta_I(tau,t,i,j))
                 player_i_name :str = self.player_names[i]
+                """
+                Consider maybe regularizing the keeping amount
                 
+                """
                 if i == j:
                     """
                     self.estimate_keeping(tau,t,i)
                     """
                     estimated = self.estimate_keeping(tau,t,i) * self.num_tokens
-                    regulated = self.move_1_towards_0(estimated, ammount= 0 )
+                    regulated = self.move_1_towards_0(estimated, ammount= 2 )
                     rounded = round(regulated )
-                    clamped = clamp( regulated , -self.num_tokens ,self.num_tokens)
+                    clamped = clamp( regulated , 0 ,self.num_tokens)
                     self.allocations[new_round][player_i_name][player_i_name] = clamped
                 else:
                     """
@@ -227,7 +225,7 @@ class GameParser:
                     """
                     # I might want to move the clamp and round out...
                     estimate = self.estimate_x_allocate_j_i(tau,t,i,j) * self.num_tokens
-                    regulated = self.move_1_towards_0(estimate, ammount = 0)
+                    regulated = self.move_1_towards_0(estimate, ammount = 0.5)
                     rounded = round( regulated  )
                     clamped = clamp( regulated ,-self.num_tokens, self.num_tokens)
                     self.allocations[new_round][player_j_name][player_i_name] = clamped# replace with the estimation
@@ -261,18 +259,19 @@ class GameParser:
         """
         
         
+        if ammount == 0: return the_number_to_move
 
         dist_to_0 : float = the_number_to_move - 0
         new_num : float = 0
         if dist_to_0 < 0:
-            new_num = the_number_to_move + ammount
+            new_num = the_number_to_move + 1
         if dist_to_0 > 0:
-            new_num = the_number_to_move - ammount
+            new_num = the_number_to_move - 1
         
         if clip and new_num < 1 and new_num > -1:
             new_num = 0
 
-        return new_num
+        return self.move_1_towards_0(new_num,ammount-1)
 
 
     def estimate_keeping(self,tau :int, t:int, i:int) -> float:
