@@ -2,6 +2,7 @@ import Pop_eq
 
 def clamp(n : float, smallest:int = 0, largest:int = 10) ->float:
     return max(smallest, min(n,largest))
+
 class GameParser:
     """
     Game parser will hold a game object and allow the user to make queries about the game.
@@ -244,6 +245,7 @@ class GameParser:
         
         if total_allocations == 0: return
         for player in self.allocations[round_name][player_i_name]:
+            # Might want to round towards 0
             self.allocations[round_name][player_i_name][player] = clamp( round( (self.allocations[round_name][player_i_name][player] / total_allocations) * self.num_tokens ) , -self.num_tokens, self.num_tokens) 
         
 
@@ -259,7 +261,7 @@ class GameParser:
         """
         
         
-        if ammount == 0: return the_number_to_move
+        if ammount >= 0: return the_number_to_move
 
         dist_to_0 : float = the_number_to_move - 0
         new_num : float = 0
@@ -273,6 +275,8 @@ class GameParser:
 
         return self.move_1_towards_0(new_num,ammount-1)
 
+    def round_to_0(self,the_num : float) ->float:
+        pass
 
     def estimate_keeping(self,tau :int, t:int, i:int) -> float:
         """
@@ -310,7 +314,7 @@ class GameParser:
             if j == i: continue
 
             # Get the change in influence
-            change_in_i :float = self.delta_I(tau,t,i,j) 
+            change_in_i :float = self.delta_I(tau,t,j,i) 
 
             # If there is a negative interaction try to estimate 
             if  change_in_i < 0:
