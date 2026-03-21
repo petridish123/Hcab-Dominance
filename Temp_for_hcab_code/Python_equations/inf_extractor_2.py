@@ -216,20 +216,20 @@ class GameParser:
                     self.estimate_keeping(tau,t,i)
                     """
                     estimated = self.estimate_keeping(tau,t,i) * self.num_tokens
-                    regulated = self.move_1_towards_0(estimated, ammount= 2 )
+                    regulated = self.move_1_towards_0(estimated, ammount= 0 )
                     rounded = round(regulated )
-                    clamped = clamp( regulated , 0 ,self.num_tokens)
-                    self.allocations[new_round][player_i_name][player_i_name] = clamped
+                    clamped = clamp( rounded , 0 ,self.num_tokens)
+                    self.allocations[new_round][player_i_name][player_i_name] = estimated #clamped
                 else:
                     """
                     Estimate giving from j to i 
                     """
                     # I might want to move the clamp and round out...
                     estimate = self.estimate_x_allocate_j_i(tau,t,i,j) * self.num_tokens
-                    regulated = self.move_1_towards_0(estimate, ammount = 0.5)
+                    regulated = self.move_1_towards_0(estimate, ammount = 0.0)
                     rounded = round( regulated  )
-                    clamped = clamp( regulated ,-self.num_tokens, self.num_tokens)
-                    self.allocations[new_round][player_j_name][player_i_name] = clamped# replace with the estimation
+                    clamped = clamp( rounded ,-self.num_tokens, self.num_tokens)
+                    self.allocations[new_round][player_j_name][player_i_name] = estimate#clamped# replace with the estimation
         print(pretty_print_dict(self.allocations[new_round]))
 
         for player in range(self.numplayer):
@@ -246,6 +246,7 @@ class GameParser:
         if total_allocations == 0: return
         for player in self.allocations[round_name][player_i_name]:
             # Might want to round towards 0
+            
             self.allocations[round_name][player_i_name][player] = clamp( round( (self.allocations[round_name][player_i_name][player] / total_allocations) * self.num_tokens ) , -self.num_tokens, self.num_tokens) 
         
 
@@ -261,7 +262,7 @@ class GameParser:
         """
         
         
-        if ammount >= 0: return the_number_to_move
+        if ammount <= 0: return the_number_to_move
 
         dist_to_0 : float = the_number_to_move - 0
         new_num : float = 0
@@ -270,7 +271,7 @@ class GameParser:
         if dist_to_0 > 0:
             new_num = the_number_to_move - 1
         
-        if clip and new_num < 1 and new_num > -1:
+        if clip and new_num <= 1 and new_num >= -1:
             new_num = 0
 
         return self.move_1_towards_0(new_num,ammount-1)
@@ -307,26 +308,26 @@ class GameParser:
 
         me_amount : float = 0.0
         total_amount : float = 0.0
-        # if tau == 1: # kill the first round, should be able to remove soon though
-        #      return 0
+
         for j in range(self.numplayer):
-            # don't check against this player
+
             if j == i: continue
 
             # Get the change in influence
-            change_in_i :float = self.delta_I(tau,t,j,i) 
-
+            change_in_i :float = self.delta_I(tau,t,j,i) # Get from i to j because that would tell us the change in how much i is giving to them
+    
             # If there is a negative interaction try to estimate 
             if  change_in_i < 0:
                 # These are reversed because I take the change in influence rather than negative influence. 
-                total_amount -= change_in_i / self.params["cSteal"] # Change in influence divided by the coef_steal. This will get the estimated amount of stealing
-                me_amount += change_in_i # Still not sure what me_amount does 
+                total_amount -= change_in_i / self.params["cSteal"]   # Change in influence divided by the coef_steal. This will get the estimated amount of stealing
+                me_amount += change_in_i 
             else: # if the change in i is 0 or positive
                 # Estimate how much we are given
-                total_amount += change_in_i / self.params["cGive"] # Why not W_j?
+                total_amount += change_in_i / self.params["cGive"] # Why not W_j? The reason is because it will actually cancel out in the final equation
 
         # This updates the amount that was kept
-        me_amount = (me_amount + self.delta_I(tau,t,i,i)) / self.params["cKeep"]
+        
+        me_amount = (me_amount + self.delta_I(tau,t,i,i) ) / self.params["cKeep"]
         total_amount += me_amount
         if me_amount < 0: return 0
         if total_amount > 0:
