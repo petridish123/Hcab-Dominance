@@ -355,7 +355,7 @@ def pretty_print_dict(this_dict : dict) -> str:
 laptop_path :str = "C:/Users/peter/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 pc_path : str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 def main():
-    n = 4
+    n = 6
     import game_creator
     game_creator_obj = game_creator.game_obj.load_to_dict(pc_path)
     game_obj = game_creator.game_obj(game_creator_obj).game_obj()
@@ -378,7 +378,7 @@ def main():
         if x.strip() == "q":
             exit(0)
     print("printing rounds")
-    for i in range(2,n+1):
+    for i in range(1,n+1):
         round_name : str = "round_" + str(i)
         print(pretty_print_dict(inf_extractor.allocations[round_name]))
 
