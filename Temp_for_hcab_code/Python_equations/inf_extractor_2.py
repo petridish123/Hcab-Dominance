@@ -240,10 +240,21 @@ class GameParser:
             total_allocations += abs(self.allocations[round_name][player_i_name][player])
         
         if total_allocations == 0: return
+        if total_allocations < self.num_tokens:
+            """
+            This is where we know:
+             1) there is a steal that is happening
+             2) the steal was likely blocked or in some other way it was ignored
+            
+            Solution:
+             1) find who it was likely allocated to
+             2) Allocate all remaining tokens to that individual.
+             3) Follow through with normalization (recursion type thing) 
+            """
         for player in self.allocations[round_name][player_i_name]:
             # Might want to round towards 0
-            
-            self.allocations[round_name][player_i_name][player] = clamp( round( (self.allocations[round_name][player_i_name][player] / total_allocations) * self.num_tokens ) , -self.num_tokens, self.num_tokens) 
+            self.allocations[round_name][player_i_name][player] = round(self.allocations[round_name][player_i_name][player])
+            # self.allocations[round_name][player_i_name][player] = clamp( round( (self.allocations[round_name][player_i_name][player] / total_allocations) * self.num_tokens ) , -self.num_tokens, self.num_tokens) 
         
 
     def estimate_keeping(self,tau :int, t:int, i:int) -> float:
@@ -354,10 +365,11 @@ def pretty_print_dict(this_dict : dict) -> str:
 
 laptop_path :str = "C:/Users/peter/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 pc_path : str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
+new_json :str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/Temp_for_hcab_code/Sample_games/JHG_DataSets/Lab Games/JHG-pre-study_Chat/jhg_HLCK.json"
 def main():
-    n = 6
+    n = 10
     import game_creator
-    game_creator_obj = game_creator.game_obj.load_to_dict(pc_path)
+    game_creator_obj = game_creator.game_obj.load_to_dict(new_json)
     game_obj = game_creator.game_obj(game_creator_obj).game_obj()
 
     inf_extractor = GameParser(game_obj)
@@ -370,13 +382,13 @@ def main():
         round_name = "round_" + str(i)
 
         pop_round = "round_" + str(i+1)
-        print(f"round: {round_name}, {pop_round}")
+        # print(f"round: {round_name}, {pop_round}")
         inf_extractor.popularities[pop_round] = game_obj["popularities"][round_name]
         # print(inf_extractor.popularities[pop_round])
         inf_extractor.make_round(game_obj["influences"][round_name],i,i) # Push the round name back 1
-        x = input(">>>")
-        if x.strip() == "q":
-            exit(0)
+        # x = input(">>>")
+        # if x.strip() == "q":
+        #     exit(0)
     print("printing rounds")
     for i in range(1,n+1):
         round_name : str = "round_" + str(i)
