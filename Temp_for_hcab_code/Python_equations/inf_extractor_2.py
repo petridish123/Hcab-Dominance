@@ -250,7 +250,14 @@ class GameParser:
              1) find who it was likely allocated to
              2) Allocate all remaining tokens to that individual.
              3) Follow through with normalization (recursion type thing) 
+            
+            
+            Steps:
+             1) Find who they stole from
+             2) Allocate remaining to them
+             3) if there is no stealing, find who could have blocked, then allocate to them
             """
+            
         for player in self.allocations[round_name][player_i_name]:
             # Might want to round towards 0
             self.allocations[round_name][player_i_name][player] = round(self.allocations[round_name][player_i_name][player])
