@@ -360,6 +360,7 @@ class GameParser:
             return self.delta_I(tau,t,i,j)/ (self.params["alpha"] * self.W_j(tau-1,t,j)* self.params["cKeep"])
         else:
             print(f"player i :{i}, player j:{j} delta I: {self.delta_I(tau,t,i,j)}, w:{self.W_j(tau,t,j)}, {tau},{t}")
+            if self.W_j(tau,t,j) == 0: return 0
             new_val = self.delta_I(tau,t,i,j)/ ( self.params["alpha"] * self.W_j(tau,t,j) )
             # print(tau,t,i,j,new_val)
             if new_val >= 0:
