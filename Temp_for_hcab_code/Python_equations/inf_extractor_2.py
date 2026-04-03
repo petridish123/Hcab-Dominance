@@ -257,6 +257,10 @@ class GameParser:
              2) Allocate remaining to them
              3) if there is no stealing, find who could have blocked, then allocate to them
             """
+            for player in self.allocations[round_name][player_i_name]:
+                if round(self.allocations[round_name][player_i_name][player]) < 0:
+                    self.allocations[round_name][player_i_name][player] -= self.num_tokens - total_allocations
+                    total_allocations = self.num_tokens
             
         for player in self.allocations[round_name][player_i_name]:
             # Might want to round towards 0
@@ -374,7 +378,7 @@ laptop_path :str = "C:/Users/peter/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-d
 pc_path : str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 new_json :str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/Temp_for_hcab_code/Sample_games/JHG_DataSets/Lab Games/JHG-pre-study_Chat/jhg_HLCK.json"
 def main():
-    n = 10
+    n = 12
     import game_creator
     game_creator_obj = game_creator.game_obj.load_to_dict(new_json)
     game_obj = game_creator.game_obj(game_creator_obj).game_obj()
