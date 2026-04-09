@@ -70,6 +70,15 @@ class GeneAgent3(AbstractAgent):
 
         # Add the influences
         # Add the popularties
+        if round_num == 1:
+            """
+            Add the popularities to round_0 and round_1
+            
+            """
+
+        """
+        Make the popularities add to the next round
+        """
 
         # Make the transactions
 
@@ -78,7 +87,8 @@ class GeneAgent3(AbstractAgent):
         # This is to work with current iteration of the influence extractor
         self.gameParams["cKeep"] = self.gameParams["keep"] 
         self.gameParams["cSteal"] = self.gameParams["steal"] 
-        self.gameParams["cGive"] = self.gameParams["give"] 
+        self.gameParams["cGive"] = self.gameParams["give"]
+        
         self.forced_random = _forcedRandom
 
     def add_round_to_game(self,round_num : int)->None:

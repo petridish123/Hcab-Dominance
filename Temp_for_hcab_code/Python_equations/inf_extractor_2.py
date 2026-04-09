@@ -180,9 +180,10 @@ class GameParser:
 
         else:
             this_w = self.W_j(tau,t,j)
+            # if i == 2 
             give_allocations = self.x_i_j_positive(tau,t,i,j)
-            steal_allcations = self.x_i_j_negative(tau,t,i,j)
-            return this_w * (self.params["cGive"] * give_allocations - self.c_steal_k(tau,t,i) * steal_allcations)
+            steal_allcations = self.x_i_j_negative(tau,t,i,j) #
+            return this_w * (self.params["cGive"] * give_allocations -  self.c_steal_k(tau,t,i) * steal_allcations)
     
     def make_round(self,influence:dict, tau:int, t:int)->None:
         """
@@ -227,7 +228,7 @@ class GameParser:
  
                     self.allocations[round_name][player_j_name][player_i_name] = estimate
                     # self.allocations[new_round][player_j_name][player_i_name] = estimate
-        print(pretty_print_dict(self.allocations[round_name]))
+        # print(pretty_print_dict(self.allocations[round_name]))
 
         for player in range(self.numplayer):
             player_i_name : str = self.player_names[player]
@@ -241,6 +242,7 @@ class GameParser:
         
         if total_allocations == 0: return
         if total_allocations < self.num_tokens:
+            pass
             """
             This is where we know:
              1) there is a steal that is happening
@@ -257,10 +259,10 @@ class GameParser:
              2) Allocate remaining to them
              3) if there is no stealing, find who could have blocked, then allocate to them
             """
-            for player in self.allocations[round_name][player_i_name]:
-                if round(self.allocations[round_name][player_i_name][player]) < 0:
-                    self.allocations[round_name][player_i_name][player] -= self.num_tokens - total_allocations
-                    total_allocations = self.num_tokens
+            # for player in self.allocations[round_name][player_i_name]:
+            #     if round(self.allocations[round_name][player_i_name][player]) < 0:
+            #         self.allocations[round_name][player_i_name][player] -= self.num_tokens - total_allocations
+            #         total_allocations = self.num_tokens
             
         for player in self.allocations[round_name][player_i_name]:
             # Might want to round towards 0
@@ -357,9 +359,10 @@ class GameParser:
         if tau == 1: return 0
         if i == j:
             print("NOT RIGHT")
-            return self.delta_I(tau,t,i,j)/ (self.params["alpha"] * self.W_j(tau-1,t,j)* self.params["cKeep"])
+            exit()
         else:
-            print(f"player i :{i}, player j:{j} delta I: {self.delta_I(tau,t,i,j)}, w:{self.W_j(tau,t,j)}, {tau},{t}")
+            if t == 8:
+                print(f"player i :{i}, player j:{j} delta I: {self.delta_I(tau,t,i,j)}, w:{self.W_j(tau,t,j)}, {tau},{t}, {self.influence_i_j(tau,t,i,j)}")
             if self.W_j(tau,t,j) == 0: return 0
             new_val = self.delta_I(tau,t,i,j)/ ( self.params["alpha"] * self.W_j(tau,t,j) )
             # print(tau,t,i,j,new_val)
@@ -375,6 +378,22 @@ def pretty_print_dict(this_dict : dict) -> str:
         output += str(key) + " : " + str(value) + "\n"
     return output
 
+
+def print_dict_as_matrix(this_dict:dict) -> str:
+    output = ""
+    for key, value in this_dict.items():
+        output += "["
+        for second_key, second_value in value.items():
+            spacing = "  "
+            if abs(second_value) //10 == 0:
+                spacing += " "
+            if second_value >= 0:
+                spacing += " "
+            output += str(second_value) + spacing
+        output+= "] : " + str(key) + "\n"
+    return output
+
+
 laptop_path :str = "C:/Users/peter/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 pc_path : str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 new_json :str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/Temp_for_hcab_code/Sample_games/JHG_DataSets/Lab Games/JHG-pre-study_Chat/jhg_HLCK.json"
@@ -385,7 +404,7 @@ def main():
     game_obj = game_creator.game_obj(game_creator_obj).game_obj()
 
     inf_extractor = GameParser(game_obj)
-    print(game_obj["popularities"])
+    # print(game_obj["popularities"])
     round_name = "round_1"
     pop_round = "round_0"
     inf_extractor.popularities[round_name] = game_obj["popularities"][round_name]
@@ -402,9 +421,11 @@ def main():
         # if x.strip() == "q":
         #     exit(0)
     print("printing rounds")
-    for i in range(1,n+1):
+    for i in range(7,n+1):
         round_name : str = "round_" + str(i)
-        print(pretty_print_dict(inf_extractor.allocations[round_name]))
+        print(round_name)
+        # print(pretty_print_dict(inf_extractor.allocations[round_name]))
+        print(print_dict_as_matrix(inf_extractor.allocations[round_name]))
 
 
 
