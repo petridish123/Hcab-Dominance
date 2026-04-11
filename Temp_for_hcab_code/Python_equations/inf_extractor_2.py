@@ -79,8 +79,10 @@ class GameParser:
         influence_tau_minus =  self.influence_i_j(tau - 1,t,i,j)
         # if j==0 and i ==2:
         #     print(f"Influence tau -, tau : {tau}, tau-1:{tau-1}, t: {t}... {influence_tau_minus}, {influence_tau}")
-       
+
         d_i = influence_tau - (1-self.params["alpha"]) * influence_tau_minus        
+        if (t == 10 or t==11)  and i==7:
+            print(f"j: {j}, delta_i = {d_i}")
         return d_i
     
     def x_i_j_positive(self, tau : int, t :int , i: int, j:int) -> float:
@@ -107,7 +109,7 @@ class GameParser:
 
         allocation : float = self.allocations[round_name][name_j][name_i] 
         if allocation < 0:
-            return allocation / self.num_tokens
+            return abs(allocation / self.num_tokens)
         else:
             return 0
     
@@ -165,7 +167,10 @@ class GameParser:
             return self.influences[this_round][name_i][name_j]
    
         # return self.influences[this_round][name_i][name_j] # failsafe
-        return self.params["alpha"] * self.V_i_j(tau,t,i,j) + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j)     
+        inf = self.params["alpha"] * self.V_i_j(tau,t,i,j) + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j)
+
+        
+        return inf     
 
     def V_i_j(self, tau:int, t:int, i:int, j:int)->float:
         # return Pop_eq.V_i_j(tau,t,i,j)
@@ -183,7 +188,9 @@ class GameParser:
             # if i == 2 
             give_allocations = self.x_i_j_positive(tau,t,i,j)
             steal_allcations = self.x_i_j_negative(tau,t,i,j) #
-            return this_w * (self.params["cGive"] * give_allocations -  self.c_steal_k(tau,t,i) * steal_allcations)
+            v__ = this_w * (self.params["cGive"] * give_allocations -  self.c_steal_k(tau,t,i) * steal_allcations)
+
+            return v__
     
     def make_round(self,influence:dict, tau:int, t:int)->None:
         """
@@ -259,10 +266,10 @@ class GameParser:
              2) Allocate remaining to them
              3) if there is no stealing, find who could have blocked, then allocate to them
             """
-            # for player in self.allocations[round_name][player_i_name]:
-            #     if round(self.allocations[round_name][player_i_name][player]) < 0:
-            #         self.allocations[round_name][player_i_name][player] -= self.num_tokens - total_allocations
-            #         total_allocations = self.num_tokens
+            for player in self.allocations[round_name][player_i_name]:
+                if round(self.allocations[round_name][player_i_name][player]) < 0:
+                    self.allocations[round_name][player_i_name][player] -= self.num_tokens - total_allocations
+                    total_allocations = self.num_tokens
             
         for player in self.allocations[round_name][player_i_name]:
             # Might want to round towards 0
@@ -361,8 +368,8 @@ class GameParser:
             print("NOT RIGHT")
             exit()
         else:
-            if t == 8:
-                print(f"player i :{i}, player j:{j} delta I: {self.delta_I(tau,t,i,j)}, w:{self.W_j(tau,t,j)}, {tau},{t}, {self.influence_i_j(tau,t,i,j)}")
+            if t == 11 and j == 9 and i ==2:
+                print(f"player i :{i}, player j:{j} delta I: {self.delta_I(tau,t,i,j)}, w:{self.W_j(tau,t,j)}, {tau},{t}, {self.influence_i_j(tau,t,i,j)}, {self.influence_i_j(tau-1,t-1,i,j)}")
             if self.W_j(tau,t,j) == 0: return 0
             new_val = self.delta_I(tau,t,i,j)/ ( self.params["alpha"] * self.W_j(tau,t,j) )
             # print(tau,t,i,j,new_val)
