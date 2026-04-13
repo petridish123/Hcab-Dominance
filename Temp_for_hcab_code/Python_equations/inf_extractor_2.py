@@ -81,8 +81,8 @@ class GameParser:
         #     print(f"Influence tau -, tau : {tau}, tau-1:{tau-1}, t: {t}... {influence_tau_minus}, {influence_tau}")
 
         d_i = influence_tau - (1-self.params["alpha"]) * influence_tau_minus        
-        if (t == 10 or t==11)  and i==7:
-            print(f"j: {j}, delta_i = {d_i}")
+        if (t==11 or t == 12)  and i==7:
+            print(f"j: {j}, delta_i = {d_i}, {influence_tau_minus}, {influence_tau}")
         return d_i
     
     def x_i_j_positive(self, tau : int, t :int , i: int, j:int) -> float:
@@ -122,9 +122,15 @@ class GameParser:
         numerator :float = self.x_i_j_positive(tau,t,k,k) * self.W_j(tau,t,k)
         denominator :float = 0
         # Get all negative allocations
+        
         for j in range(self.numplayer):
             if j == k: continue
             denominator += (self.x_i_j_negative(tau,t,j,k)) * self.W_j(tau,t,j)
+        # for j in range(self.numplayer):
+        #     if j == k: continue
+        #     denominator += (self.x_i_j_negative(tau,t,k,j)) * self.W_j(tau,t,k)
+        
+        
         if denominator == 0:
             return c_steal
         return c_steal * max (0, 1 - (numerator / denominator))
@@ -376,7 +382,9 @@ class GameParser:
             if new_val >= 0:
                 return new_val / (self.params["cGive"])
             else:
-                return  new_val / self.params["cSteal"] # This needs to be c_steal_k
+                if self.c_steal_k(tau,t,j) == 0:
+                    return new_val/self.params["cSteal"]
+                return  new_val / self.c_steal_k(tau,t,j)#self.params["cSteal"] # This needs to be c_steal_k
 
 
 def pretty_print_dict(this_dict : dict) -> str:
