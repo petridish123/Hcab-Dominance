@@ -123,12 +123,12 @@ class GameParser:
         denominator :float = 0
         # Get all negative allocations
         
-        for j in range(self.numplayer):
-            if j == k: continue
-            denominator += (self.x_i_j_negative(tau,t,j,k)) * self.W_j(tau,t,j)
         # for j in range(self.numplayer):
         #     if j == k: continue
-        #     denominator += (self.x_i_j_negative(tau,t,k,j)) * self.W_j(tau,t,k)
+        #     denominator += (self.x_i_j_negative(tau,t,j,k)) * self.W_j(tau,t,j)
+        for j in range(self.numplayer):
+            if j == k: continue
+            denominator += (self.x_i_j_negative(tau,t,k,j)) * self.W_j(tau,t,j)
         
         
         if denominator == 0:
