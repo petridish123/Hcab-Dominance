@@ -81,7 +81,7 @@ class GameParser:
         #     print(f"Influence tau -, tau : {tau}, tau-1:{tau-1}, t: {t}... {influence_tau_minus}, {influence_tau}")
 
         d_i = influence_tau - (1-self.params["alpha"]) * influence_tau_minus        
-        if (t==11 or t == 12)  and i==7:
+        if (t==11 or t == 10)  and i==2 and j ==10:
             print(f"j: {j}, delta_i = {d_i}, {influence_tau_minus}, {influence_tau}")
         return d_i
     
@@ -174,7 +174,8 @@ class GameParser:
    
         # return self.influences[this_round][name_i][name_j] # failsafe
         inf = self.params["alpha"] * self.V_i_j(tau,t,i,j) + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j)
-
+        if (t == 11 or t==11) and j == 10 and i==2:
+            print(f"t: {t}, tau {tau} ,inf {inf}, {self.V_i_j(tau,t,i,j)} ")
         
         return inf     
 
@@ -194,6 +195,7 @@ class GameParser:
             # if i == 2 
             give_allocations = self.x_i_j_positive(tau,t,i,j)
             steal_allcations = self.x_i_j_negative(tau,t,i,j) #
+
             v__ = this_w * (self.params["cGive"] * give_allocations -  self.c_steal_k(tau,t,i) * steal_allcations)
 
             return v__
@@ -245,13 +247,17 @@ class GameParser:
 
         for player in range(self.numplayer):
             player_i_name : str = self.player_names[player]
-            self.normalize_allocations_player_i(round_name, player_i_name)
+            
+            self.normalize_allocations_player_i(round_name, player_i_name, tau)
 
-    def normalize_allocations_player_i(self, round_name : str, player_i_name: str)-> None:
+    def normalize_allocations_player_i(self, round_name : str, player_i_name: str, tau:int)-> None:
         "As part of normalization, I think I am going to bring the allocations 1ish towards 0"
         total_allocations :float = 0
+        pop_round_name = "round_" + str(tau+1)
+
         for player in self.allocations[round_name][player_i_name]:
             total_allocations += abs(self.allocations[round_name][player_i_name][player])
+            
         
         if total_allocations == 0: return
         if total_allocations < self.num_tokens:
@@ -273,7 +279,10 @@ class GameParser:
              3) if there is no stealing, find who could have blocked, then allocate to them
             """
             for player in self.allocations[round_name][player_i_name]:
-                if round(self.allocations[round_name][player_i_name][player]) < 0:
+
+                if round(self.allocations[round_name][player_i_name][player]) < 0 and self.popularities[pop_round_name][player] >= 1:
+                    if tau == 11:
+                        print(f"popularity of {player} : {self.popularities[pop_round_name][player]}")
                     self.allocations[round_name][player_i_name][player] -= self.num_tokens - total_allocations
                     total_allocations = self.num_tokens
             
@@ -443,7 +452,7 @@ def main():
         print(print_dict_as_matrix(inf_extractor.allocations[round_name]))
 
 
-
+    print(pretty_print_dict(inf_extractor.popularities))
 
 if __name__ == '__main__':
     main()
