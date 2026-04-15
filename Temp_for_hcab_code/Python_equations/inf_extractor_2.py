@@ -81,8 +81,8 @@ class GameParser:
         #     print(f"Influence tau -, tau : {tau}, tau-1:{tau-1}, t: {t}... {influence_tau_minus}, {influence_tau}")
 
         d_i = influence_tau - (1-self.params["alpha"]) * influence_tau_minus        
-        if (t==11 or t == 10)  and i==2 and j ==10:
-            print(f"j: {j}, delta_i = {d_i}, {influence_tau_minus}, {influence_tau}")
+        if (t == 11 or t == 10) and j == 10 and i == 2:
+            print(f"di {t} : {d_i}")
         return d_i
     
     def x_i_j_positive(self, tau : int, t :int , i: int, j:int) -> float:
@@ -114,10 +114,7 @@ class GameParser:
             return 0
     
     def c_steal_k(self, tau :int ,t:int,k:int) ->float:
-        """
-        This should calcualte the c_steal, but for now this will just do the parameter
-        """
-        # return self.params["cSteal"]
+
         c_steal = self.params["cSteal"]
         numerator :float = self.x_i_j_positive(tau,t,k,k) * self.W_j(tau,t,k)
         denominator :float = 0
@@ -174,8 +171,8 @@ class GameParser:
    
         # return self.influences[this_round][name_i][name_j] # failsafe
         inf = self.params["alpha"] * self.V_i_j(tau,t,i,j) + (1-self.params["alpha"]) * self.influence_i_j(tau-1,t,i,j)
-        if (t == 11 or t==11) and j == 10 and i==2:
-            print(f"t: {t}, tau {tau} ,inf {inf}, {self.V_i_j(tau,t,i,j)} ")
+        if t == 11 and tau == 10 and j == 10 and i == 2:
+            print(f"influence : {inf}")
         
         return inf     
 
@@ -197,7 +194,8 @@ class GameParser:
             steal_allcations = self.x_i_j_negative(tau,t,i,j) #
 
             v__ = this_w * (self.params["cGive"] * give_allocations -  self.c_steal_k(tau,t,i) * steal_allcations)
-
+            if t == 11 and tau == 10 and j == 10 and i == 2:
+                print(f"V__ = {v__}")
             return v__
     
     def make_round(self,influence:dict, tau:int, t:int)->None:
@@ -281,14 +279,14 @@ class GameParser:
             for player in self.allocations[round_name][player_i_name]:
 
                 if round(self.allocations[round_name][player_i_name][player]) < 0 and self.popularities[pop_round_name][player] >= 1:
-                    if tau == 11:
-                        print(f"popularity of {player} : {self.popularities[pop_round_name][player]}")
+                    
                     self.allocations[round_name][player_i_name][player] -= self.num_tokens - total_allocations
                     total_allocations = self.num_tokens
             
         for player in self.allocations[round_name][player_i_name]:
             # Might want to round towards 0
-            self.allocations[round_name][player_i_name][player] = round(self.allocations[round_name][player_i_name][player])
+            allocation = self.allocations[round_name][player_i_name][player]
+            self.allocations[round_name][player_i_name][player] = round(allocation)# if allocation > -1e-6 else int(allocation)
             # self.allocations[round_name][player_i_name][player] = clamp( round( (self.allocations[round_name][player_i_name][player] / total_allocations) * self.num_tokens ) , -self.num_tokens, self.num_tokens) 
         
 
@@ -383,8 +381,6 @@ class GameParser:
             print("NOT RIGHT")
             exit()
         else:
-            if t == 11 and j == 9 and i ==2:
-                print(f"player i :{i}, player j:{j} delta I: {self.delta_I(tau,t,i,j)}, w:{self.W_j(tau,t,j)}, {tau},{t}, {self.influence_i_j(tau,t,i,j)}, {self.influence_i_j(tau-1,t-1,i,j)}")
             if self.W_j(tau,t,j) == 0: return 0
             new_val = self.delta_I(tau,t,i,j)/ ( self.params["alpha"] * self.W_j(tau,t,j) )
             # print(tau,t,i,j,new_val)
@@ -422,7 +418,7 @@ laptop_path :str = "C:/Users/peter/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-d
 pc_path : str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/jhg-2-preprod-default-rtdb-7fba3f01-fc79-11f0-87e5-611d50488b9f-export.json"
 new_json :str = "C:/Users/Mango/Desktop/GitHub/Hcab-Dominance/Temp_for_hcab_code/Sample_games/JHG_DataSets/Lab Games/JHG-pre-study_Chat/jhg_HLCK.json"
 def main():
-    n = 12
+    n = 14
     import game_creator
     game_creator_obj = game_creator.game_obj.load_to_dict(new_json)
     game_obj = game_creator.game_obj(game_creator_obj).game_obj()
@@ -452,7 +448,7 @@ def main():
         print(print_dict_as_matrix(inf_extractor.allocations[round_name]))
 
 
-    print(pretty_print_dict(inf_extractor.popularities))
+    # print(pretty_print_dict(inf_extractor.popularities))
 
 if __name__ == '__main__':
     main()
