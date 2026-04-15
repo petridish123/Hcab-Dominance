@@ -286,7 +286,7 @@ class GameParser:
         for player in self.allocations[round_name][player_i_name]:
             # Might want to round towards 0
             allocation = self.allocations[round_name][player_i_name][player]
-            self.allocations[round_name][player_i_name][player] = round(allocation)# if allocation > -1e-6 else int(allocation)
+            self.allocations[round_name][player_i_name][player] = round(allocation) #if allocation > round(allocation)-1e-6 and allocation < round(allocation) + 1e-1 else allocation
             # self.allocations[round_name][player_i_name][player] = clamp( round( (self.allocations[round_name][player_i_name][player] / total_allocations) * self.num_tokens ) , -self.num_tokens, self.num_tokens) 
         
 
