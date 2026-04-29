@@ -35,9 +35,9 @@ class GameParser:
         self.player_names : dict
         self.numplayer : int
         
-        if not "names" in self.game_obj: 
+        if not "names" in self.game_obj: # THIS SHOULD NEVER BE THE CASE UNLESS YOU ARE PULLING FROM A GAME FILE 
             self.make_player_names()
-        else:
+        else: # THIS IS WHAT SHOULD BE USED
             self.player_names = game_obj["names"]
             self.numplayer = game_obj["numplayers"]
         

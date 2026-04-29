@@ -13,9 +13,9 @@ import inf_extractor_2
 
 class GeneAgent3(AbstractAgent):
 
-    def __init__(self, geneStr, _num_gene_copies):  # Change on Sep 21
+    def __init__(self, geneStr, _num_gene_copies) -> None:  
         super().__init__()
-        self.num_gene_copies = _num_gene_copies     # Change on Sep 21
+        self.num_gene_copies = _num_gene_copies  
         self.whoami = "gene"
         self.count = 0
         self.relativeFitness = 0.0
@@ -52,7 +52,8 @@ class GeneAgent3(AbstractAgent):
             influences = {}
             popularities = {}
             allocations = {}
-            players = {} # make names p0 - pn and their index dict[int:str]
+            # I will get these from len(popularities)
+            players = {i:"p"+str(i) for i in range(len(popularities))} # make names p0 - pn and their index dict[int:str]
             self.game_obj = {"influences" : influences, 
                              "popularities": popularities,
                              "allocations" : allocations,
@@ -60,6 +61,8 @@ class GeneAgent3(AbstractAgent):
                              "names" : players,
                              "numplayers" : len(players)
                             }
+            # Remake the gameparser here using the game_obj
+            # -> First need to make the player names
             pass # Create the inf extracter gameparser
 
         # At each playstep, I need to update my beliefs.
@@ -82,7 +85,7 @@ class GeneAgent3(AbstractAgent):
 
         # Make the transactions
 
-    def setGameParams(self, gameParams, _forcedRandom):
+    def setGameParams(self, gameParams, _forcedRandom) -> None:
         self.gameParams = gameParams # keep, give, steal, alpha, beta,
         # This is to work with current iteration of the influence extractor
         self.gameParams["cKeep"] = self.gameParams["keep"] 
@@ -97,3 +100,21 @@ class GeneAgent3(AbstractAgent):
             "popularities": {},
             "transactions": {},
         }
+
+
+
+"""
+TODO:
+
+Set up the influence extractor
+make play round
+
+
+TODO PLAYROUND:
+play round should take in the information
+-> calculate tokens in the influence extractor
+-> estimate new h-cab (whole lot here)
+-> rollout scenarios and pick the best allocations (hard part)
+
+
+"""
