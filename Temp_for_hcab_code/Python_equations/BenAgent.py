@@ -63,9 +63,8 @@ class GeneAgent3(AbstractAgent):
                             }
             # Remake the gameparser here using the game_obj
             # -> First need to make the player names
-            pass # Create the inf extracter gameparser
+            self.game_maker : inf_extractor_2.GameParser = inf_extractor_2.GameParser(self.game_obj)
 
-        # At each playstep, I need to update my beliefs.
         
         # First make a new round
         this_round : str = "round_" + str(round_num)
@@ -73,17 +72,34 @@ class GeneAgent3(AbstractAgent):
 
         # Add the influences
         # Add the popularties
-        if round_num == 1:
-            """
-            Add the popularities to round_0 and round_1
+        if round_num == 1: # Do this round 1 to make the inf extractor work
+            pop_dict_0 :dict = {self.game_obj["names"][i] : popularities[i] for i in range(len(popularities))} # This creates a dictionary for the first round (and round 0)
+            self.game_maker.popularities["round_0"] = pop_dict_0
+            self.game_maker.popularities["round_1"] = pop_dict_0
+        
+        round_name : str = "round" + str(round_num) # This is to help the inf_extractor
+        popularity_round_name : str = "round" + str(round_num + 1) # really odd, but the only way the math works out
+        # Adding popularities
+        popularity_dictionary : dict = {self.game_obj["names"][i]:popularities[i] for i in range(len(popularities))}
+        self.game_maker.popularities[popularity_round_name] = popularity_dictionary
+
+        # Making round
+
+        influences_this_round : dict = {self.game_obj["names"][i] : 
+                                        {self.game_obj["names"][j] : influence[i][j] for j in range(len(influence))} 
+                                        for i in range(len(influence))} # How is influence actually sent? may need to switch i and j
+        self.game_maker.make_round(influences_this_round, round_num, round_num)
+
+        """
+        Now that we have the tokens, we need to compare each player with an hcab and keep a running score... probably a dictionary
+        Then softmax to get the greatest likelihood for the player
+        predict the tokens
+        select an hcab parameterization for ourselves that maximizes ____
+        return that allocation        
+        """
+
+
             
-            """
-
-        """
-        Make the popularities add to the next round
-        """
-
-        # Make the transactions
 
     def setGameParams(self, gameParams, _forcedRandom) -> None:
         self.gameParams = gameParams # keep, give, steal, alpha, beta,
